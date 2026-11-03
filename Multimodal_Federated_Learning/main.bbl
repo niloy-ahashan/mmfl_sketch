@@ -1,0 +1,78 @@
+%%% -*-BibTeX-*-
+%%% Do NOT edit. File created by BibTeX with style
+%%% ACM-Reference-Format-Journals [18-Jan-2012].
+
+\begin{thebibliography}{5}
+
+%%% ====================================================================
+%%% NOTE TO THE USER: you can override these defaults by providing
+%%% customized versions of any of these macros before the \bibliography
+%%% command.  Each of them MUST provide its own final punctuation,
+%%% except for \shownote{} and \showURL{}.  The latter two
+%%% do not use final punctuation, in order to avoid confusing it with
+%%% the Web address.
+%%%
+%%% To suppress output of a particular field, define its macro to expand
+%%% to an empty string, or better, \unskip, like this:
+%%%
+%%% \newcommand{\showURL}[1]{\unskip}   % LaTeX syntax
+%%%
+%%% \def \showURL #1{\unskip}           % plain TeX syntax
+%%%
+%%% ====================================================================
+
+\ifx \showCODEN    \undefined \def \showCODEN     #1{\unskip}     \fi
+\ifx \showISBNx    \undefined \def \showISBNx     #1{\unskip}     \fi
+\ifx \showISBNxiii \undefined \def \showISBNxiii  #1{\unskip}     \fi
+\ifx \showISSN     \undefined \def \showISSN      #1{\unskip}     \fi
+\ifx \showLCCN     \undefined \def \showLCCN      #1{\unskip}     \fi
+\ifx \shownote     \undefined \def \shownote      #1{#1}          \fi
+\ifx \showarticletitle \undefined \def \showarticletitle #1{#1}   \fi
+\ifx \showURL      \undefined \def \showURL       {\relax}        \fi
+% The following commands are used for tagged output and should be
+% invisible to TeX
+\providecommand\bibfield[2]{#2}
+\providecommand\bibinfo[2]{#2}
+\providecommand\natexlab[1]{#1}
+\providecommand\showeprint[2][]{arXiv:#2}
+
+\bibitem[Hsu et~al\mbox{.}(2019)]%
+        {hsu2019measuring}
+\bibfield{author}{\bibinfo{person}{Tzu-Ming~Harry Hsu}, \bibinfo{person}{Hang Qi}, {and} \bibinfo{person}{Matthew Brown}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \bibinfo{title}{Measuring the Effects of Non-Identical Data Distribution for Federated Visual Classification}.
+\newblock
+\showeprint[arxiv]{1909.06335}~[cs.LG]
+
+
+\bibitem[Liu et~al\mbox{.}(2025)]%
+        {liu2025fedmobile}
+\bibfield{author}{\bibinfo{person}{Yi Liu}, \bibinfo{person}{Cong Wang}, {and} \bibinfo{person}{Xingliang Yuan}.} \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{{FedMobile}: Enabling Knowledge Contribution-aware Multi-modal Federated Learning with Incomplete Modalities}. In \bibinfo{booktitle}{\emph{Proceedings of the ACM Web Conference 2025 (WWW '25)}}. \bibinfo{publisher}{ACM}, \bibinfo{address}{Sydney, NSW, Australia}, \bibinfo{numpages}{12}~pages.
+\newblock
+\href{https://doi.org/10.1145/3696410.3714623}{doi:\nolinkurl{10.1145/3696410.3714623}}
+
+
+\bibitem[Rothchild et~al\mbox{.}(2020)]%
+        {rothchild2020fetchsgd}
+\bibfield{author}{\bibinfo{person}{Daniel Rothchild}, \bibinfo{person}{Ashwinee Panda}, \bibinfo{person}{Enayat Ullah}, \bibinfo{person}{Nikita Ivkin}, \bibinfo{person}{Ion Stoica}, \bibinfo{person}{Vladimir Braverman}, \bibinfo{person}{Joseph Gonzalez}, {and} \bibinfo{person}{Raman Arora}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{{FetchSGD}: Communication-Efficient Federated Learning with Sketching}. In \bibinfo{booktitle}{\emph{Proceedings of the 37th International Conference on Machine Learning (ICML)}} \emph{(\bibinfo{series}{Proceedings of Machine Learning Research}, Vol.~\bibinfo{volume}{119})}. \bibinfo{publisher}{PMLR}, \bibinfo{address}{Virtual Event}, \bibinfo{pages}{8253--8265}.
+\newblock
+
+
+\bibitem[Yuan et~al\mbox{.}(2024)]%
+        {yuan2024mfedmc}
+\bibfield{author}{\bibinfo{person}{Liangqi Yuan}, \bibinfo{person}{Dong-Jun Han}, \bibinfo{person}{Su Wang}, \bibinfo{person}{Devesh Upadhyay}, {and} \bibinfo{person}{Christopher~G. Brinton}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{Communication-Efficient Multimodal Federated Learning: Joint Modality and Client Selection}.
+\newblock
+\showeprint[arxiv]{2401.16685}~[cs.LG]
+
+
+\bibitem[Zuo et~al\mbox{.}(2025)]%
+        {zuo2025pfmh}
+\bibfield{author}{\bibinfo{person}{Ruifan Zuo}, \bibinfo{person}{Chaoqun Zheng}, \bibinfo{person}{Lei Zhu}, \bibinfo{person}{Wenpeng Lu}, \bibinfo{person}{Yuanyuan Xiang}, \bibinfo{person}{Zhao Li}, {and} \bibinfo{person}{Xiaofeng Qu}.} \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{Learning Together Securely: Prototype-Based Federated Multi-Modal Hashing for Safe and Efficient Multi-Modal Retrieval}. In \bibinfo{booktitle}{\emph{Proceedings of the AAAI Conference on Artificial Intelligence}}, Vol.~\bibinfo{volume}{39}. \bibinfo{publisher}{AAAI Press}, \bibinfo{address}{Philadelphia, PA, USA}, \bibinfo{pages}{23108--23116}.
+\newblock
+\href{https://doi.org/10.1609/aaai.v39i21.34475}{doi:\nolinkurl{10.1609/aaai.v39i21.34475}}
+
+
+\end{thebibliography}

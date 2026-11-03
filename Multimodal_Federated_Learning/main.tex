@@ -1,0 +1,970 @@
+%%
+%% Based on the ACM `sigconf' sample (samples.dtx). For review, switch to
+%%   \documentclass[sigconf,review,anonymous]{acmart}
+%% and uncomment \settopmatter{printacmref=false} below.
+%%
+\documentclass[sigconf]{acmart}
+
+%% ---- Packages and macros (must come AFTER \documentclass) ----
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{placeins}                      % provides \FloatBarrier
+\renewcommand{\floatpagefraction}{0.75}    % lets a tall table take a column by itself
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{colortbl}
+\newcommand{\method}{Hybrid}   % method name, used everywhere
+
+\AtBeginDocument{%
+  \providecommand\BibTeX{{%
+    Bib\TeX}}}
+
+%% Rights management information: SAMPLE values, replace with the ones
+%% from your rights form / target venue.
+\setcopyright{acmlicensed}
+\copyrightyear{2018}
+\acmYear{2018}
+\acmDOI{XXXXXXX.XXXXXXX}
+\acmConference[Conference acronym 'XX]{Make sure to enter the correct
+  conference title from your rights confirmation email}{June 03--05,
+  2018}{Woodstock, NY}
+\acmISBN{978-1-4503-XXXX-X/2018/06}
+% \settopmatter{printacmref=false}   % hides the ACM reference block (useful for review)
+
+\begin{document}
+
+\title{Communication Efficient Multimodal Federated Learning using Linear Sketch}
+
+\author{Ahashan Habib Niloy}
+\authornote{Corresponding author.}
+\email{ahashan.niloy@uky.edu}
+\affiliation{%
+  \institution{University of Kentucky}
+  \city{Lexington}
+  \state{Kentucky}
+  \country{USA}
+}
+
+\author{Haibo Wang}
+\email{wanghaibo@uky.edu}
+\affiliation{%
+  \institution{University of Kentucky}
+  \city{Lexington}
+  \state{Kentucky}
+  \country{USA}
+}
+
+\renewcommand{\shortauthors}{Niloy and Wang}
+
+\begin{abstract}
+This is the abstract.
+\end{abstract}
+
+%% Generate the real CCS concepts at https://dl.acm.org/ccs and paste them here.
+\begin{CCSXML}
+<ccs2012>
+ <concept>
+  <concept_id>10010147.10010178.10010219</concept_id>
+  <concept_desc>Computing methodologies~Distributed artificial intelligence</concept_desc>
+  <concept_significance>500</concept_significance>
+ </concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Computing methodologies~Distributed artificial intelligence}
+
+\keywords{Federated Learning, Multimodal AI, Communication Efficiency}
+
+\maketitle
+
+
+\section{Introduction}
+This is introduction.
+
+\section{Related Work}
+
+\subsection{Multimodal Fusion}
+
+\subsection{Compression}
+
+
+\section{Preliminaries}
+
+\subsection{Multimodal Federated Learning}
+
+\subsection{Communication-Efficient Federated Learning}
+
+\subsection{Selective Federated Learning}
+
+\subsection{Our Proposed Work}
+
+% \begin{algorithm}[t]
+% \caption{\method: Sketch-Compressed Multimodal FL with Joint Client and Modality Selection}
+% \label{alg:method}
+% \small
+% \begin{algorithmic}[1]
+% \Require Clients $\mathcal{N}=\{1,\dots,N\}$ with local data $\mathcal{D}_i$, $n_i=|\mathcal{D}_i|$;
+%   modalities $\mathcal{M}$ ($|\mathcal{M}|\ge 2$), each sample $\mathbf{x}=(\mathbf{x}_m)_{m\in\mathcal{M}}$;
+%   model $f(\mathbf{x};\mathbf{w})=g\big(\sum_{m\in\mathcal{M}}\Phi(\mathbf{e}_m(\mathbf{x}_m;\boldsymbol{\theta}_m));\boldsymbol{\theta}_s\big)$
+%   with per-modality encoders $\mathbf{e}_m=\mathbf{h}_m\odot\sigma(R_m(\mathbf{h}_m))$, $\mathbf{h}_m=E_m(\mathbf{x}_m)$ ($\sigma$: sigmoid),
+%   a fixed (untrained) fusion sketch $\Phi$, and shared integrator/classifier $g(\cdot;\boldsymbol{\theta}_s)$;
+%   $\mathbf{w}^0=\big[\{\boldsymbol{\theta}_m\}_{m\in\mathcal{M}},\boldsymbol{\theta}_s\big]\in\mathbb{R}^d$;
+%   task loss $\ell$, $\mathcal{L}_i(\mathbf{w})=\frac{1}{n_i}\sum_{(\mathbf{x},y)\in\mathcal{D}_i}\ell\big(f(\mathbf{x};\mathbf{w}),y\big)$;
+%   rounds $T$; client ratio $\delta$; modalities per client $\gamma$;
+%   priority weights $(\lambda_1,\lambda_2,\lambda_3)$; staleness weight $\beta\ge 0$;
+%   loss preference $\kappa\in\{\text{high},\text{low}\}$;
+%   upload sketch $\mathcal{S}(\cdot)\in\mathbb{R}^{r\times c}$; top-$k$;
+%   momentum $\rho$; weight decay $\mu$; learning rates $\eta_t$
+% \Ensure Global model $\mathbf{w}^T$
+% \State $K\gets\max\big(1,\mathrm{round}(\delta N)\big)$;\; $\gamma\gets\min(\gamma,|\mathcal{M}|)$
+% \State $c_m\gets 1-\dfrac{|\boldsymbol{\theta}_m|-\min_{m'}|\boldsymbol{\theta}_{m'}|}{\max_{m'}|\boldsymbol{\theta}_{m'}|-\min_{m'}|\boldsymbol{\theta}_{m'}|}\;\;\forall m$
+%        \Comment{size term, fixed}
+% \State $\mathbf{V}\gets\mathbf{0}_{r\times c}$;\; $\mathbf{E}\gets\mathbf{0}_{r\times c}$
+% \State $R_{i,m}\gets -1$;\; $\tau_i\gets -1$ \quad $\forall i\in\mathcal{N},\, m\in\mathcal{M}$
+% \For{$t=0,\dots,T-1$}
+%   \Statex \hspace{\algorithmicindent}\textit{// Scoring: forward pass only, no training}
+%   \For{each client $i\in\mathcal{N}$ \textbf{in parallel}}
+%     \State $v_i\gets\mathcal{L}_i(\mathbf{w}^t)$ \Comment{inference mode}
+%     \State $\phi_{i,m}\gets\textsc{ShapScore}_m(\mathbf{w}^t;\mathcal{D}_i)$ \ $\forall m$
+%            \Comment{$0$ if $n_i<2$}
+%   \EndFor
+%   \Statex \hspace{\algorithmicindent}\textit{// Client selection}
+%   \State $\hat{v}_i\gets\begin{cases}\mathrm{norm}(\mathbf{v})_i, & \kappa=\text{high}\\ 1-\mathrm{norm}(\mathbf{v})_i, & \kappa=\text{low}\end{cases}$ \ $\forall i$
+%   \State $s_i\gets\frac{t-\tau_i}{t+1}$;\; $p_i\gets\hat{v}_i+\beta\,\mathrm{norm}(\mathbf{s})_i$ \ $\forall i$
+%   \State $\mathcal{C}_t\gets$ the $K$ clients with the largest $p_i$
+%   \State $\tau_i^{\mathrm{prev}}\gets\tau_i$;\; $\tau_i\gets t$ \ $\forall i\in\mathcal{C}_t$
+%   \Statex \hspace{\algorithmicindent}\textit{// Modality selection ($\tilde{\cdot}$: min--max over $m$, $0$ if all equal)}
+%   \For{each client $i\in\mathcal{C}_t$}
+%     \State $a_{i,m}\gets\frac{t-R_{i,m}}{t+1}$ \ $\forall m$
+%     \State $P_{i,m}\gets\lambda_1\tilde{\phi}_{i,m}+\lambda_2\,c_m+\lambda_3\,\tilde{a}_{i,m}$ \ $\forall m$
+%     \State $\mathcal{M}_i\gets$ the $\gamma$ modalities with the largest $P_{i,m}$
+%     \State $R_{i,m}\gets t$ \ $\forall m\in\mathcal{M}_i$
+%   \EndFor
+%   \Statex \hspace{\algorithmicindent}\textit{// Local gradient and sketched upload}
+%   \For{each client $i\in\mathcal{C}_t$ \textbf{in parallel}}
+%     \State Receive entries of $\mathbf{w}^t$ changed since round $\tau_i^{\mathrm{prev}}$
+%     \Statex \hfill$\triangleright$ $\tau_i^{\mathrm{prev}}=-1\Rightarrow$ entries changed since $\mathbf{w}^0$
+%     \State $\mathbf{g}_i\gets\nabla_{\mathbf{w}}\mathcal{L}_i(\mathbf{w}^t)+\frac{\mu}{K}\mathbf{w}^t$
+%            \Comment{all local data, train mode}
+%     \State $\mathbf{g}_i\gets\mathbf{m}_i\odot\mathbf{g}_i$, \ $\mathbf{m}_i\in\{0,1\}^d$ keeps
+%            $\boldsymbol{\theta}_s$ and $\{\boldsymbol{\theta}_m\}_{m\in\mathcal{M}_i}$
+%     \State Upload $\mathbf{S}_i\gets n_i\,\mathcal{S}(\mathbf{g}_i)$
+%            \Comment{$r\times c$ floats}
+%   \EndFor
+%   \Statex \hspace{\algorithmicindent}\textit{// Server: FetchSGD update in sketch space}
+%   \State $\mathbf{S}\gets\sum_{i\in\mathcal{C}_t}\mathbf{S}_i\big/\sum_{i\in\mathcal{C}_t}n_i$
+%          \Comment{linearity of $\mathcal{S}$}
+%   \State $\mathbf{V}\gets\rho\mathbf{V}+\mathbf{S}$;\; $\mathbf{E}\gets\mathbf{E}+\mathbf{V}$
+%   \State $\boldsymbol{\Delta}\gets\textsc{Top}_k\big(\textsc{Unsketch}(\mathbf{E})\big)$
+%   \State $\mathbf{E}[\mathcal{S}(\boldsymbol{\Delta})\neq 0]\gets 0$;\;
+%          $\mathbf{V}[\mathcal{S}(\boldsymbol{\Delta})\neq 0]\gets 0$
+%   \State $\mathbf{w}^{t+1}\gets\mathbf{w}^t-\eta_t\,\boldsymbol{\Delta}$
+% \EndFor
+% \State \Return $\mathbf{w}^T$
+% \end{algorithmic}
+% \end{algorithm}
+
+
+
+
+% \paragraph{Modality importance (\textup{\textsc{ShapScore}}).}
+% To estimate how much each modality contributes to a client's predictions,
+% without any local training or extra communication, we adapt the
+% Shapley-value score of MFedMC~\cite{yuan2024mfedmc} to the shared global model.
+% Let $\mathcal{Y}=\{1,\dots,|\mathcal{Y}|\}$ be the label set. For client $i$, we
+% first obtain a \emph{unimodal prediction} from every modality $m\in\mathcal{M}$
+% by passing only that modality through the global model:
+% \begin{equation}
+%   \hat{y}_m(\mathbf{x};\mathbf{w}^t)
+%   = \arg\max_{q\in\mathcal{Y}}
+%     \Big[\, g\big(\Phi(\mathbf{f}'_m(\mathbf{x}));\,\boldsymbol{\theta}_s\big) \Big]_q ,
+%   \label{eq:unimodal_pred}
+% \end{equation}
+% where $\mathbf{f}'_m$ is the refined feature of modality $m$, $\Phi$ is the
+% fusion sketch, and $g(\cdot;\boldsymbol{\theta}_s)$ is the shared integrator
+% and classifier; all other modalities are left out of the fusion, and the model
+% runs in inference mode. Collecting these predictions over the local data gives
+% a table
+% $\mathbf{Z}_i=\big[\hat{y}_m(\mathbf{x};\mathbf{w}^t)\big]_{\mathbf{x}\in\mathcal{D}_i,\,m\in\mathcal{M}}
+% \in\mathcal{Y}^{n_i\times|\mathcal{M}|}$, in which each column holds one
+% modality's predicted labels. The client then fits a lightweight fusion model
+% $h_i$, a random forest that predicts the true label $y$ from the row
+% $\mathbf{z}_{\mathbf{x}}$ of $\mathbf{Z}_i$.
+% % TODO: state the number of trees (n_estimators) used in selection.py.
+% The importance of modality $m$ is its total absolute Shapley value in $h_i$:
+% \begin{equation}
+%   \textsc{ShapScore}_m(\mathbf{w}^t;\mathcal{D}_i)
+%   = \sum_{\mathbf{x}\in\mathcal{B}_i}\;\sum_{q\in\mathcal{Y}}
+%     \big|\psi_{m,q}\big(h_i,\mathbf{z}_{\mathbf{x}};\mathcal{B}_i\big)\big| ,
+%   \label{eq:shapscore}
+% \end{equation}
+% where $\mathcal{B}_i\subseteq\mathcal{D}_i$ is a random subset of
+% $\min(50,n_i)$ samples, used both as the background distribution and as the
+% samples being explained, and $\psi_{m,q}(\cdot)$ is the SHAP
+% value~\cite{lundberg2020local} of feature $m$ for the predicted probability
+% of class $q$. A large score means that $h_i$'s decisions depend strongly on
+% modality $m$'s unimodal prediction, i.e., that the modality carries
+% discriminative information about the client's data. Clients with $n_i<2$
+% samples cannot fit $h_i$ and receive a score of $0$ for every
+% modality.\footnote{If $h_i$ cannot be fitted or explained, the score of each
+% modality falls back to the accuracy of its unimodal prediction
+% $\hat{y}_m$ on $\mathcal{D}_i$. Unlike MFedMC, which computes Shapley values
+% from separately trained unimodal models after local training, we compute them
+% from the shared global model before any local training, so the two scores are
+% not directly comparable.}
+% The scores are min--max normalized over modalities before they enter the
+% priority $P_{i,m}$ (line~16 of Algorithm~\ref{alg:method}). The fusion model
+% $h_i$ is used only to compute the scores on the client and is never uploaded.
+
+
+\section{System Design}
+
+\subsection{Overview}
+
+
+\section{Evaluation}
+
+\subsection{Experimental Settings}
+
+\textbf{System Deployment.}
+All experiments were run on a single workstation with an Intel Core i7-13700 CPU (16 cores, 24 threads), 32\,GB of RAM and one NVIDIA GeForce RTX 4080 GPU (16\,GB), under Ubuntu 24.04 LTS. Federated training is simulated on this machine: the 10 clients and the server share the GPU, and communication is measured analytically as 4 bytes per transmitted 32-bit value. Models are implemented in PyTorch 2.6 (CUDA 12.4, cuDNN 9.1) with Python 3.10; SHAP values are computed with SHAP 0.42 and scikit-learn 1.5 random forests. The FetchSGD baseline uses the authors' CommEfficient codebase on PyTorch 2.5 (CUDA 12.1).
+
+\begin{table}[t]
+\caption{Description of datasets.}
+\label{tab:datasets}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{@{}c c c l c c@{}}
+\toprule
+\textbf{Dataset} & \textbf{Clients}$^{1}$ & \textbf{Task} & \textbf{Modality} & \textbf{Dim.} & \textbf{\shortstack{Train /\\Test}} \\
+\midrule
+\multirow{2}{*}{UCI HAR} & \multirow{2}{*}{\shortstack{10\\(30 subjects)}} & \multirow{2}{*}{\shortstack{6 daily\\activities}}
+  & Accelerometer$^{2}$ & 348 & \multirow{2}{*}{\shortstack{7,352 /\\2,947}} \\
+ & & & Gyroscope$^{2}$ & 213 & \\
+\midrule
+\multirow{4}{*}{mHealth} & \multirow{4}{*}{\shortstack{10\\(10 subjects)}} & \multirow{4}{*}{\shortstack{12 physical\\activities}}
+  & Accelerometer$^{3}$ & 177 & \multirow{4}{*}{\shortstack{3,681 /\\1,542}} \\
+ & & & Gyroscope$^{3}$ & 118 & \\
+ & & & Magnetometer$^{3}$ & 118 & \\
+ & & & ECG$^{3}$ & 43 & \\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+\parbox{\columnwidth}{\scriptsize
+$^{1}$ Training windows are split across $N=10$ clients by a Dirichlet partition ($\alpha=0.1$), not by subject.\\
+$^{2}$ Dimension of the input features. UCI HAR: the 561 time- and frequency-domain features of each window, split by source sensor.\\
+$^{3}$ Accelerometer on chest, left ankle and right lower arm; gyroscope and magnetometer on ankle and arm; 2-lead ECG on chest. mHealth features: 14 time-domain statistics per axis and magnitude, plus pairwise inter-axis correlations.}
+\end{table}
+
+\textbf{Datasets.}
+We evaluate the performance on two multimodal sensing applications (i.e., human activity recognition benchmarks), summarized in Table~\ref{tab:datasets}.
+
+\begin{enumerate}
+  \item \textbf{Smartphone-based Activity Recognition.}
+  The UCI Human Activity Recognition dataset (UCI HAR for short) is used for recognizing daily activities from the inertial sensors of a waist-mounted smartphone. It was collected from 30 volunteers performing 6 activities (walking, walking upstairs, walking downstairs, sitting, standing and laying). Signals are sampled at 50\,Hz and segmented into 2.56\,s windows with 50\% overlap, and each window is described by 561 time- and frequency-domain features. We split each window's features into two modalities by their source sensor: an accelerometer modality (348-D) and a gyroscope modality (213-D). The dataset includes 7,352 and 2,947 windows for training and test, respectively, following the original subject-disjoint split.
+
+  \item \textbf{Wearable Health Monitoring.}
+  The mHealth dataset records body motion and vital signs from 10 subjects performing 12 physical activities. Shimmer2 sensors are placed on the chest, left ankle and right lower arm, sampled at 50\,Hz. We discard the null class and segment each contiguous activity run into windows of 128 samples (2.56\,s) with 50\% overlap. For every sensor axis and its magnitude channel we extract 14 time-domain statistics (e.g., mean, standard deviation, range, skewness, kurtosis, energy and zero-crossing rate), plus pairwise inter-axis correlations. This yields four modalities: accelerometer (chest, ankle and arm; 177-D), gyroscope (ankle and arm; 118-D), magnetometer (ankle and arm; 118-D) and 2-lead ECG (chest; 43-D). Features are z-score normalized using training statistics. To prevent overlapping windows from leaking across the split, we assign whole activity runs to either training or test, which gives 3,681 training and 1,542 test windows.
+\end{enumerate}
+
+\textbf{Models.}
+All models share the same per-modality encoder: a feature extractor with two fully-connected layers ($d_m \rightarrow 512 \rightarrow 512$, with ReLU and dropout of 0.3), followed by a feature refiner with two fully-connected layers ($512 \rightarrow 512 \rightarrow 512$) whose sigmoid output gates the extracted features element-wise. The three designs differ in how they fuse the modalities. \method{} fuses modalities with a fixed Count Sketch. Each refined 512-D feature vector is hashed into a $2 \times 128$ sketch table, and the tables of all modalities are summed into a 256-D fused representation. An integrator with two fully-connected layers ($256 \rightarrow 512 \rightarrow 512$) and a linear classifier follow. The fusion sketch has no trainable parameters. The model has 2.26M parameters (9.05\,MB) on UCI HAR and 3.79M parameters (15.2\,MB) on mHealth.
+
+\textbf{Settings of Statistical Heterogeneity.}
+In the experiments, the training samples are distributed across $N = 10$ clients following a label-based Dirichlet distribution~\cite{hsu2019measuring}. For each class $k$, we draw a vector $\mathbf{p}_k \sim \mathrm{Dir}(\alpha\mathbf{1}_N)$ that gives the share of class $k$ held by each client, and each training sample of class $k$ is assigned to client $j$ with probability $p_{k,j}$. The concentration parameter $\alpha > 0$ controls how identical the clients are. As $\alpha \to \infty$, every client receives each class in the same proportion as the global training set (i.e., IID). As $\alpha \to 0$, each class concentrates on a single client, which is a high degree of statistical heterogeneity. We set $\alpha = 0.1$ to create a highly non-IID setting, and fix the partition across all methods with a common random seed, so every method trains on exactly the same client datasets.
+
+With $\alpha = 0.1$, the clients are skewed both in label distribution and in dataset size:
+\begin{itemize}
+  \item \textit{UCI HAR:} each client holds between 1 and 5 of the 6 activities, and the most frequent activity makes up 42\% to 100\% of a client's data. Client datasets range from 1 to 1,665 samples (735 on average).
+  \item \textit{mHealth:} each client holds between 3 and 8 of the 12 activities, with the most frequent activity making up 23\% to 76\% of its data. Client datasets range from 38 to 820 samples (368 on average).
+\end{itemize}
+Measured by the KL divergence between each client's label distribution and the global one, the average divergence is 1.24 on UCI HAR and 1.37 on mHealth. The test sets are not partitioned: all methods are evaluated on the same global test set of each dataset (2,947 samples for UCI HAR and 1,542 for mHealth), which covers all classes.
+
+\textbf{Baselines.}
+We measure the effectiveness of our work through a comparison with two approaches.
+\begin{enumerate}
+  \item \textbf{Independent Compression}
+  is a communication-efficient multimodal FL approach that treats multimodal fusion and gradient compression as two independent steps. Modalities are fused by element-wise summation of their refined features. Each client's full model gradient is then compressed with FetchSGD~\cite{rothchild2020fetchsgd}, i.e., it is projected into a Count Sketch before upload, and the server recovers the top-$k$ coordinates from the aggregated sketch, with momentum and error feedback applied in sketch space. In every round, all clients participate and every modality is uploaded, so the compression is uniform across modalities and ignores how useful each modality or client is to the model.
+
+  \item \textbf{MFedMC}~\cite{yuan2024mfedmc}
+  is a state-of-the-art multimodal FL approach that reduces communication through joint modality and client selection. Each client trains a separate unimodal model per modality, then ranks its modalities by a priority score that combines each modality's Shapley value, the size of its model, and how recently it was uploaded. The server selects the clients with the highest local loss. Only the top-ranked modality models of the selected clients are uploaded, as uncompressed model weights, and each modality's global model is aggregated separately. Modalities are fused only at inference, by late fusion of the unimodal predictions. For a fair comparison, we replace MFedMC's original encoders with the same extractor--refiner encoder used by the other methods.
+
+    \item \textbf{PFMH}~\cite{zuo2025pfmh}
+  is a prototype-based federated multimodal hashing approach, in which clients
+  share class prototypes instead of their full data, with a prototype
+  completion strategy to handle class imbalance and statistical heterogeneity
+  across clients. It was proposed for multimodal retrieval; we adapt it to
+  activity classification.
+  % TODO: describe the adaptation and exactly what each client uploads per round.
+
+  % \item \textbf{FL-FD}~\cite{qi2023flfd}
+  % is a federated learning approach with multimodal data fusion, originally
+  % proposed for fall detection. In each round, 8 of the 10 clients (80\%)
+  % participate.
+  % % TODO: describe its fusion strategy and what each client uploads per round.
+
+    \item \textbf{FedMobile}~\cite{liu2025fedmobile}
+  is a multimodal FL approach designed for clients with incomplete modalities.
+  Besides its multimodal model, each client trains a lightweight generator
+  that maps class labels to latent features, which substitute for missing
+  modalities during fusion. In every round, each participating client uploads
+  its full model update together with its generator, and the server
+  aggregates the updates with weights based on each client's estimated
+  contribution, measured on a small proxy dataset, while the generators are
+  clustered and combined using Shapley-value weights.
+  % TODO: state how many clients participate per round in our runs, and how it
+  % is applied in our setting (all modalities are present on UCI HAR and mHealth).
+\end{enumerate}
+
+\textbf{Metrics.}
+We adopt the following metrics to evaluate the performance of our work and the baselines.
+\begin{enumerate}
+  \item \textbf{Test Accuracy}
+  reflects the accuracy of the global model trained by each approach, measured as the proportion of the global test set that the model classifies correctly. We evaluate the global model on the same held-out test set after every communication round and record the final accuracy for all approaches. For MFedMC, which keeps a separate model per modality, the prediction is the class with the highest sum of the unimodal log-probabilities.
+
+  \item \textbf{Communication Traffic}
+  is the total volume of data exchanged between the clients and the server during training, counting both uploads and downloads, with every transmitted value stored as a 32-bit float.
+  \begin{itemize}
+    \item \textit{Upload:} for \method{} and Independent Compression, each participating client uploads one Count Sketch table (rows $\times$ columns values). For MFedMC, each selected client uploads the full weights of each selected modality model.
+    \item \textit{Download:} for the sketch-based methods, a client downloads only the model coordinates that changed since it last participated. For MFedMC, every client downloads all modality models in every round.
+  \end{itemize}
+  We report the cumulative traffic in megabytes (MB).
+
+  \item \textbf{Communication to Target Accuracy}
+  
+\end{enumerate}
+
+% TODO: update this paragraph to the budget sweep in Table~\ref{tab:uci_full}
+% (sketch sizes, clients per round, rounds and seeds 42--46); the values below are from the earlier runs.
+
+\textbf{Experimental Parameters.}
+All approaches use $N=10$ clients, the extractor--refiner encoder with a 512-D
+hidden size and a dropout rate of 0.3, and the partition and test sets described
+above. On UCI HAR, we compare the approaches under five cumulative upload
+budgets of 10, 20, 30, 40 and 50\,MB. Since each approach transmits a different
+amount per round, the budget fixes the number of rounds $T$ that each
+configuration can run (Table~\ref{tab:uci_full}).
+\begin{itemize}
+  \item \textit{\method:} each selected client uploads the gradient of its
+  top-1 of the two modalities (top-2 of four on mHealth), computed over its full
+  local dataset. The modality priority weights SHAP value, model size and
+  recency equally (1/3 each), and the fusion sketch has 2 rows and 128 columns.
+  The uploaded gradient is compressed into a Count Sketch with 3 rows, and the
+  server recovers the top $k = 20{,}000$ coordinates using momentum 0.9 and
+  error feedback. On UCI HAR, we sweep the two parameters that determine the
+  cost of a round: the number of clients selected per round,
+  $K\in\{1,2,3,4,6\}$ (10--60\%), and the sketch width, from 2,500 to 30,000
+  columns. For each pair, $T$ is the largest number of rounds that fits the
+  budget, i.e., $T \approx B / (4\,r\,c\,K)$ bytes for a budget $B$ and an
+  $r\times c$ sketch, which gives between 21 and 340 rounds. This yields 42
+  configurations across the five budgets, all listed in
+  Table~\ref{tab:uci_full}. On mHealth, two clients (20\%) are selected per
+  round with a $3\times5{,}000$ sketch for 210 rounds.
+  \item \textit{Independent Compression:} all 10 clients participate in every
+  round and upload a sketch of their full-batch gradient for 85 rounds. On UCI
+  HAR, the sketch has 3 rows and its width grows with the budget, from 1,000
+  columns at 10\,MB to 5,000 at 50\,MB (1,000 columns per 10\,MB). On mHealth,
+  it uses a $3\times5{,}000$ sketch for 42 rounds. It uses the same $k$,
+  momentum and error feedback as \method.
+  \item \textit{MFedMC:} every selected client trains each unimodal model for
+  5 local epochs of SGD, with a fixed learning rate of 0.05 and a batch size of
+  32, and uploads its top-1 (UCI HAR) or top-2 (mHealth) modality models
+  uncompressed, with the same equal priority weights. One client (10\%) is
+  selected per round on UCI HAR and two (20\%) on mHealth. Because each round
+  uploads a full encoder (3.6--3.9\,MB), the five UCI HAR budgets allow 3, 6,
+  8, 11 and 14 rounds, respectively; on mHealth it runs 10 rounds.
+  \item \textit{Learning rate for both sketch-based methods:} the server's
+  learning rate increases linearly from 0 to a peak of 0.05 and then decreases
+  linearly back to 0 by the last round. % TODO: state where the peak is reached for the sweep (e.g., after X% of the T rounds)
+  Weight decay is $5\times10^{-4}$ for both.
+  \item \textit{Seeds and reporting:} every configuration is run with five
+  seeds (42--46), and we report the mean final test accuracy. For a given seed,
+  all approaches train on the same client datasets. In
+  Figure~\ref{fig:uci_budgets}, we show one configuration of \method{} per
+  budget, marked $^\dagger$ in Table~\ref{tab:uci_full}.
+\end{itemize}
+
+
+\subsection{Overall Performance}
+
+% Tall single-column table: its code comes first and it may use a page of its own ([!tp]),
+% so LaTeX can place it before the end of the paper (otherwise it can be lost on the last page).
+
+\begin{table}[!tp]
+\caption{Full results on UCI HAR (mean over seeds 42--46). Sketch: upload sketch rows $\times$ columns; $K$: clients per round out of 10; $M$: modalities uploaded per client out of 2; $T$: rounds; --: not applicable. Bold: best per budget; $^\dagger$: shown in Figure~\ref{fig:uci_budgets}.}
+\label{tab:uci_full}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4.5pt}
+\renewcommand{\arraystretch}{0.92}
+\begin{tabular}[t]{@{}l c c c r c@{}}
+\toprule
+Method & Sketch & $K$ & $M$ & $T$ & Acc.\ (\%) \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{Upload budget: 10\,MB}} \\
+B1 (IC) & $3\times1{,}000$ & 10 & -- & 85 & 47.57 \\
+B2 (MFedMC) & -- & 1 & 1/2 & 3 & 31.07 \\
+B3 (PFMH) & -- & 10 & -- & 1 & 36.60 \\
+B4 (FedMobile) & -- & 10 & -- & 3 & 48.30 \\ 
+\method{} & $3\times2{,}500$ & 2 & 1/2 & 170 & 70.92 \\
+ & $3\times2{,}500$ & 4 & 1/2 & 85 & 63.37 \\
+ & $3\times5{,}000$ & 1 & 1/2 & 170 & \textbf{72.51}\rlap{$^\dagger$} \\
+ & $3\times5{,}000$ & 2 & 1/2 & 85 & 66.72 \\
+ & $3\times5{,}000$ & 4 & 1/2 & 42 & 57.44 \\
+ & $3\times10{,}000$ & 1 & 1/2 & 85 & 71.24 \\
+ & $3\times10{,}000$ & 2 & 1/2 & 42 & 61.94 \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{Upload budget: 20\,MB}} \\
+B1 (IC) & $3\times2{,}000$ & 10 & -- & 85 & 50.17 \\
+B2 (MFedMC) & -- & 1 & 1/2 & 6 & 34.76 \\
+B3 (PFMH) & -- & 10 & -- & 2 & 47.98 \\
+B4 (FedMobile) & -- & 10 & -- & 6 & 66.24 \\ 
+\method{} & $3\times5{,}000$ & 1 & 1/2 & 340 & \textbf{77.80} \\
+ & $3\times5{,}000$ & 2 & 1/2 & 170 & 74.87 \\
+ & $3\times5{,}000$ & 4 & 1/2 & 85 & 69.71 \\
+ & $3\times10{,}000$ & 1 & 1/2 & 170 & 76.54\rlap{$^\dagger$} \\
+ & $3\times10{,}000$ & 2 & 1/2 & 85 & 74.29 \\
+ & $3\times10{,}000$ & 4 & 1/2 & 42 & 64.91 \\
+ & $3\times20{,}000$ & 1 & 1/2 & 85 & 72.10 \\
+ & $3\times20{,}000$ & 2 & 1/2 & 42 & 68.31 \\
+ & $3\times20{,}000$ & 4 & 1/2 & 21 & 57.42 \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{Upload budget: 30\,MB}} \\
+B1 (IC) & $3\times3{,}000$ & 10 & -- & 85 & 69.23 \\
+B2 (MFedMC) & -- & 1 & 1/2 & 8 & 34.74 \\
+B3 (PFMH) & -- & 10 & -- & 3 & 53.26 \\
+B4 (FedMobile) & -- & 10 & -- & 10 & 66.14 \\
+\method{} & $3\times5{,}000$ & 3 & 1/2 & 170 & 76.89 \\
+ & $3\times5{,}000$ & 6 & 1/2 & 85 & 72.90 \\
+ & $3\times15{,}000$ & 1 & 1/2 & 170 & \textbf{77.66}\rlap{$^\dagger$} \\
+ & $3\times15{,}000$ & 2 & 1/2 & 85 & 75.66 \\
+ & $3\times15{,}000$ & 4 & 1/2 & 42 & 70.44 \\
+ & $3\times30{,}000$ & 1 & 1/2 & 85 & 75.32 \\
+ & $3\times30{,}000$ & 2 & 1/2 & 42 & 72.05 \\
+ & $3\times30{,}000$ & 4 & 1/2 & 21 & 59.68 \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{Upload budget: 40\,MB}} \\
+B1 (IC) & $3\times4{,}000$ & 10 & -- & 85 & 72.42 \\
+B2 (MFedMC) & -- & 1 & 1/2 & 11 & 34.88 \\
+B3 (PFMH) & -- & 10 & -- & 4 & 54.64 \\
+B4 (FedMobile) & -- & 10 & -- & 13 & 66.34 \\ 
+\method{} & $3\times10{,}000$ & 1 & 1/2 & 340 & \textbf{80.93} \\
+ & $3\times10{,}000$ & 2 & 1/2 & 170 & 79.46\rlap{$^\dagger$} \\
+ & $3\times10{,}000$ & 4 & 1/2 & 85 & 74.44 \\
+ & $3\times20{,}000$ & 1 & 1/2 & 170 & 78.66 \\
+ & $3\times20{,}000$ & 2 & 1/2 & 85 & 76.52 \\
+ & $3\times20{,}000$ & 4 & 1/2 & 42 & 69.97 \\
+ & $3\times30{,}000$ & 1 & 1/2 & 110 & 77.05 \\
+ & $3\times30{,}000$ & 2 & 1/2 & 55 & 72.26 \\
+ & $3\times30{,}000$ & 4 & 1/2 & 28 & 65.47 \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{Upload budget: 50\,MB}} \\
+B1 (IC) & $3\times5{,}000$ & 10 & -- & 85 & 72.82 \\
+B2 (MFedMC) & -- & 1 & 1/2 & 14 & 55.72 \\
+B3 (PFMH) & -- & 10 & -- & 5 & 54.96 \\
+B4 (FedMobile) & -- & 10 & -- & 16 & 67.88 \\  
+\method{} & $3\times20{,}000$ & 1 & 1/2 & 210 & \textbf{80.85}\rlap{$^\dagger$} \\
+ & $3\times20{,}000$ & 2 & 1/2 & 105 & 77.99 \\
+ & $3\times20{,}000$ & 4 & 1/2 & 53 & 73.61 \\
+ & $3\times25{,}000$ & 1 & 1/2 & 170 & 79.16 \\
+ & $3\times25{,}000$ & 2 & 1/2 & 85 & 77.82 \\
+ & $3\times25{,}000$ & 4 & 1/2 & 42 & 71.91 \\
+ & $3\times30{,}000$ & 1 & 1/2 & 140 & 78.08 \\
+ & $3\times30{,}000$ & 2 & 1/2 & 70 & 73.88 \\
+ & $3\times30{,}000$ & 4 & 1/2 & 35 & 71.05 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table*}[p]
+\caption{Full results on mHealth (mean over seeds 42--46). Sketch: upload sketch rows $\times$ columns; $K$: clients per round out of 10; $M$: modalities uploaded per client out of 4; $T$: rounds; --: not applicable. Red bold: best per budget; grey row ($^\dagger$): configuration reported in the main comparison.}
+\label{tab:mhealth_full}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4.5pt}
+\renewcommand{\arraystretch}{0.92}
+\begin{minipage}[t]{0.49\textwidth}
+\centering
+\begin{tabular}[t]{@{}l c c c r c@{}}
+\toprule
+Method & Sketch & $K$ & $M$ & $T$ & Acc.\ (\%) \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{Upload budget: 5\,MB}} \\
+B1 (IC) & $3\times1{,}000$ & 10 & -- & 42 & 28.69 \\
+B2 (MFedMC) & -- & 1 & 1/4 & 2 & 18.08 \\
+B3 (PFMH) & -- & 10 & -- & 1 & 24.83 \\
+B4 (FedMobile) & -- & 10 & -- & 0 & -- \\
+\method{} & $3\times2{,}500$ & 1 & 1/4 & 168 & 87.53 \\
+ & $3\times2{,}500$ & 1 & 2/4 & 168 & 84.88 \\
+ & $3\times2{,}500$ & 1 & 3/4 & 168 & 87.58 \\
+ & $3\times2{,}500$ & 2 & 3/4 & 84 & 65.58 \\
+ & $3\times2{,}500$ & 4 & 3/4 & 42 & 59.09 \\
+ & $3\times5{,}000$ & 1 & 1/4 & 84 & 89.73 \\
+ & $3\times5{,}000$ & 1 & 2/4 & 84 & 92.17 \\
+ & $3\times5{,}000$ & 1 & 3/4 & 84 & \cellcolor{red!18}\textbf{93.16} \\
+\rowcolor{gray!25} & $3\times5{,}000$ & 2 & 3/4 & 42 & 75.25\rlap{$^\dagger$} \\
+ & $3\times5{,}000$ & 4 & 3/4 & 21 & 46.50 \\
+ & $3\times10{,}000$ & 1 & 1/4 & 42 & 65.15 \\
+ & $3\times10{,}000$ & 1 & 2/4 & 42 & 68.89 \\
+ & $3\times10{,}000$ & 1 & 3/4 & 42 & 73.02 \\
+ & $3\times10{,}000$ & 2 & 3/4 & 21 & 53.48 \\
+ & $3\times10{,}000$ & 4 & 3/4 & 11 & 30.94 \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{Upload budget: 10\,MB}} \\
+B1 (IC) & $3\times2{,}000$ & 10 & -- & 42 & 46.25 \\
+B2 (MFedMC) & -- & 1 & 1/4 & 3 & 18.04 \\
+B3 (PFMH) & -- & 10 & -- & 2 & 25.87 \\
+B4 (FedMobile) & -- & 10 & -- & 1 & 19.50 \\
+\method{} & $3\times5{,}000$ & 1 & 1/4 & 168 & 92.02 \\
+ & $3\times5{,}000$ & 1 & 2/4 & 168 & \cellcolor{red!18}\textbf{97.79} \\
+ & $3\times5{,}000$ & 1 & 3/4 & 168 & 96.76 \\
+\rowcolor{gray!25} & $3\times5{,}000$ & 2 & 3/4 & 84 & 93.63\rlap{$^\dagger$} \\
+ & $3\times5{,}000$ & 4 & 3/4 & 42 & 80.57 \\
+ & $3\times10{,}000$ & 1 & 1/4 & 84 & 90.45 \\
+ & $3\times10{,}000$ & 1 & 2/4 & 84 & 90.70 \\
+ & $3\times10{,}000$ & 1 & 3/4 & 84 & 92.77 \\
+ & $3\times10{,}000$ & 2 & 3/4 & 42 & 75.51 \\
+ & $3\times10{,}000$ & 4 & 3/4 & 21 & 52.12 \\
+ & $3\times20{,}000$ & 1 & 1/4 & 42 & 81.87 \\
+ & $3\times20{,}000$ & 1 & 2/4 & 42 & 83.15 \\
+ & $3\times20{,}000$ & 1 & 3/4 & 42 & 87.09 \\
+ & $3\times20{,}000$ & 2 & 3/4 & 21 & 61.79 \\
+ & $3\times20{,}000$ & 4 & 3/4 & 11 & 40.02 \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{Upload budget: 15\,MB}} \\
+B1 (IC) & $3\times3{,}000$ & 10 & -- & 42 & 74.44 \\
+B2 (MFedMC) & -- & 1 & 1/4 & 5 & 18.06 \\
+B3 (PFMH) & -- & 10 & -- & 3 & 29.58 \\
+B4 (FedMobile) & -- & 10 & -- & 2 & 55.15 \\
+\method{} & $3\times10{,}000$ & 1 & 1/4 & 126 & 95.60 \\
+ & $3\times10{,}000$ & 1 & 2/4 & 126 & \cellcolor{red!18}\textbf{96.90} \\
+ & $3\times10{,}000$ & 1 & 3/4 & 126 & 96.37 \\
+ & $3\times10{,}000$ & 2 & 3/4 & 63 & 87.01 \\
+ & $3\times10{,}000$ & 4 & 3/4 & 32 & 67.26 \\
+ & $3\times15{,}000$ & 1 & 1/4 & 84 & 93.63 \\
+ & $3\times15{,}000$ & 1 & 2/4 & 84 & 94.83 \\
+\rowcolor{gray!25} & $3\times15{,}000$ & 1 & 3/4 & 84 & 95.87\rlap{$^\dagger$} \\
+ & $3\times15{,}000$ & 2 & 3/4 & 42 & 85.33 \\
+ & $3\times15{,}000$ & 4 & 3/4 & 21 & 60.36 \\
+ & $3\times30{,}000$ & 1 & 1/4 & 42 & 88.17 \\
+ & $3\times30{,}000$ & 1 & 2/4 & 42 & 86.69 \\
+ & $3\times30{,}000$ & 1 & 3/4 & 42 & 90.47 \\
+ & $3\times30{,}000$ & 2 & 3/4 & 21 & 71.22 \\
+ & $3\times30{,}000$ & 4 & 3/4 & 11 & 46.13 \\
+\bottomrule
+\end{tabular}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\textwidth}
+\centering
+\begin{tabular}[t]{@{}l c c c r c@{}}
+\toprule
+Method & Sketch & $K$ & $M$ & $T$ & Acc.\ (\%) \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{Upload budget: 20\,MB}} \\
+B1 (IC) & $3\times4{,}000$ & 10 & -- & 42 & 77.94 \\
+B2 (MFedMC) & -- & 1 & 1/4 & 6 & 19.98 \\
+B3 (PFMH) & -- & 10 & -- & 4 & 35.00 \\
+B4 (FedMobile) & -- & 10 & -- & 3 & 69.40 \\
+\method{} & $3\times10{,}000$ & 1 & 1/4 & 168 & 96.68 \\
+ & $3\times10{,}000$ & 1 & 2/4 & 168 & \cellcolor{red!18}\textbf{97.69} \\
+ & $3\times10{,}000$ & 1 & 3/4 & 168 & 97.46 \\
+ & $3\times10{,}000$ & 2 & 3/4 & 84 & 92.17 \\
+ & $3\times10{,}000$ & 4 & 3/4 & 42 & 76.58 \\
+ & $3\times20{,}000$ & 1 & 1/4 & 84 & 93.65 \\
+ & $3\times20{,}000$ & 1 & 2/4 & 84 & 95.80 \\
+\rowcolor{gray!25} & $3\times20{,}000$ & 1 & 3/4 & 84 & 96.85\rlap{$^\dagger$} \\
+ & $3\times20{,}000$ & 2 & 3/4 & 42 & 88.67 \\
+ & $3\times20{,}000$ & 4 & 3/4 & 21 & 65.94 \\
+ & $3\times30{,}000$ & 1 & 1/4 & 56 & 93.37 \\
+ & $3\times30{,}000$ & 1 & 2/4 & 56 & 93.21 \\
+ & $3\times30{,}000$ & 1 & 3/4 & 56 & 93.12 \\
+ & $3\times30{,}000$ & 2 & 3/4 & 28 & 85.30 \\
+ & $3\times30{,}000$ & 4 & 3/4 & 14 & 60.37 \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{Upload budget: 25\,MB}} \\
+B1 (IC) & $3\times5{,}000$ & 10 & -- & 42 & 77.06 \\
+B2 (MFedMC) & -- & 1 & 1/4 & 8 & 19.35 \\
+B3 (PFMH) & -- & 10 & -- & 5 & 38.94 \\
+B4 (FedMobile) & -- & 10 & -- & 4 & 83.71 \\
+\method{} & $3\times20{,}000$ & 1 & 1/4 & 105 & 95.97 \\
+ & $3\times20{,}000$ & 1 & 2/4 & 105 & \cellcolor{red!18}\textbf{97.96} \\
+ & $3\times20{,}000$ & 1 & 3/4 & 105 & 96.92 \\
+ & $3\times20{,}000$ & 2 & 3/4 & 53 & 93.44 \\
+ & $3\times20{,}000$ & 4 & 3/4 & 27 & 76.64 \\
+ & $3\times25{,}000$ & 1 & 1/4 & 84 & 94.83 \\
+ & $3\times25{,}000$ & 1 & 2/4 & 84 & 96.52 \\
+\rowcolor{gray!25} & $3\times25{,}000$ & 1 & 3/4 & 84 & 97.15\rlap{$^\dagger$} \\
+ & $3\times25{,}000$ & 2 & 3/4 & 42 & 90.76 \\
+ & $3\times25{,}000$ & 4 & 3/4 & 21 & 71.21 \\
+ & $3\times30{,}000$ & 1 & 1/4 & 70 & 95.16 \\
+ & $3\times30{,}000$ & 1 & 2/4 & 70 & 96.92 \\
+ & $3\times30{,}000$ & 1 & 3/4 & 70 & 97.07 \\
+ & $3\times30{,}000$ & 2 & 3/4 & 35 & 89.09 \\
+ & $3\times30{,}000$ & 4 & 3/4 & 18 & 68.56 \\
+\bottomrule
+\end{tabular}
+\end{minipage}
+\end{table*}
+
+
+\begin{figure*}[t]
+  \centering
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_uci_10mb.png}
+    \caption{10\,MB upload budget}
+    \label{fig:uci_10mb}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_uci_20mb.png}
+    \caption{20\,MB upload budget}
+    \label{fig:uci_20mb}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_uci_30mb.png}
+    \caption{30\,MB upload budget}
+    \label{fig:uci_30mb}
+  \end{subfigure}
+
+  \vspace{4pt}
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_uci_40mb.png}
+    \caption{40\,MB upload budget}
+    \label{fig:uci_40mb}
+  \end{subfigure}\hspace{0.02\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_uci_50mb.png}
+    \caption{50\,MB upload budget}
+    \label{fig:uci_50mb}
+  \end{subfigure}
+  \caption{Test accuracy of three approaches versus cumulative upload on UCI HAR under five upload budgets.}
+  \Description{Five line plots of average test accuracy against cumulative upload traffic on UCI HAR, one per upload budget (10, 20, 30, 40 and 50 MB). Each compares Independent Compression, MFedMC and \method; \method{} reaches the highest final accuracy in every budget.}
+  \label{fig:uci_budgets}
+\end{figure*}
+
+
+\begin{figure*}[t]
+  \centering
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/mhealth_5MB_comparison_fedmobile.png}
+    \caption{5\,MB upload budget}
+    \label{fig:mhealth_5mb}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/mhealth_10MB_comparison_fedmobile.png}
+    \caption{10\,MB upload budget}
+    \label{fig:mhealth_10mb}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/mhealth_15MB_comparison_fedmobile.png}
+    \caption{15\,MB upload budget}
+    \label{fig:mhealth_15mb}
+  \end{subfigure}
+
+  \vspace{4pt}
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/mhealth_20MB_comparison_fedmobile.png}
+    \caption{20\,MB upload budget}
+    \label{fig:mhealth_20mb}
+  \end{subfigure}\hspace{0.02\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/mhealth_25MB_comparison_fedmobile.png}
+    \caption{25\,MB upload budget}
+    \label{fig:mhealth_25mb}
+  \end{subfigure}
+    \caption{Test accuracy versus cumulative upload on mHealth under five upload budgets.}
+  \Description{Five line plots of average test accuracy against cumulative upload traffic on mHealth, one per upload budget (5, 10, 15, 20 and 25 MB), comparing the baselines with \method{}.}
+  \label{fig:mhealth_budgets}
+\end{figure*}
+
+
+\paragraph{Accuracy under different communication budgets.}
+Figure~\ref{fig:uci_budgets} shows how test accuracy evolves with cumulative
+upload under each budget, and Figure~\ref{fig:uci_budget_summary} summarizes
+the final accuracy of the three approaches as the budget grows from 10\,MB to
+50\,MB.
+
+\begin{itemize}
+  \item \textbf{B1 (Independent Compression)} has all 10 clients upload a
+  Count Sketch of their full 2.39M-parameter gradient in each of its 85 rounds
+  (its summation fusion feeds a 512-D vector to the integrator, so its model is
+  larger than the 2.26M-parameter model of \method{}). A larger budget
+  therefore only lets it widen the sketch, from $3\times1{,}000$ at 10\,MB to
+  $3\times5{,}000$ at 50\,MB, which lowers the compression ratio from about
+  $798\times$ to about $160\times$. Its accuracy rises from 47.55\% to
+  72.83\%, but most of that gain comes between 20\,MB and 30\,MB, and it
+  flattens out after 40\,MB.
+  \item \textbf{B2 (MFedMC)} selects one client per round, which uploads one
+  uncompressed modality encoder (3.6--3.9\,MB). Each budget therefore buys only
+  3, 6, 8, 11 and 14 rounds, respectively; because B2 can only upload whole
+  encoders, its last round can slightly exceed the budget (e.g., 11.08\,MB at
+  the 10\,MB budget). B2 stays between 31\% and 35\% until 50\,MB, where it
+  reaches 54.59\%.
+  \item \textbf{\method{}} selects the highest-loss client (two clients at
+  40\,MB) and, for that client, keeps only the modality with the highest
+  priority based on SHAP value, encoder size and recency. The gradient entries
+  of the other modality's encoder are set to zero, and the remaining gradient
+  is compressed into a much wider sketch, from $3\times5{,}000$ to
+  $3\times20{,}000$ (about $151\times$ to $38\times$ compression), at a cost of
+  only 60--240\,KB per round. This lets \method{} run 170--210 rounds within
+  each budget. With the configurations marked $^\dagger$ in Table~\ref{tab:uci_full},
+  \method{} reaches 72.64\%, 76.34\%, 77.63\%, 79.45\% and 80.88\% at 10, 20,
+  30, 40 and 50\,MB, respectively.
+\end{itemize}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig_uci_budget_bars.png}
+  \caption{Test accuracy of the five approaches at each cumulative upload budget on UCI HAR (mean of five seeds).}
+  \Description{Grouped bar chart of test accuracy at upload budgets of 10, 20, 30, 40 and 50 MB for B1 (Independent Compression), B2 (MFedMC), B3 (PFMH), B4 (FL-FD) and \method{}. \method{} has the tallest bar at every budget (72.6\% to 80.9\%). FL-FD is the strongest baseline, rising from 56.9\% to 78.3\%; B1 rises from 47.6\% to 72.8\%; PFMH rises from 36.6\% to 55.0\%; and MFedMC stays near 31--35\% until 54.6\% at 50 MB.}
+  \label{fig:uci_budget_bars}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig_mhealth_budget_bars.pdf}
+  \caption{Test accuracy of the five approaches at each cumulative upload budget on mHealth (mean of five seeds).}
+  \Description{Grouped bar chart of test accuracy at upload budgets of 5, 10, 15, 20 and 25 MB for B1 (Independent Compression), B2 (MFedMC), B3 (PFMH), B4 (FL-FD) and \method{}. \method{} has the tallest bar at every budget from 10 MB (93.6\% to 97.2\%), while at 5 MB FL-FD is highest (78.7\% vs.\ 75.3\%). FL-FD is the strongest baseline, rising from 78.7\% to 94.0\%; B1 rises from 28.7\% to 77.9\%; PFMH rises from 24.8\% to 38.9\%; and MFedMC stays near 18--20\% at every budget.}
+  \label{fig:mhealth_budget_bars}
+\end{figure}
+
+
+As Figure~\ref{fig:uci_budget_bars} shows, \method{} thus outperforms B1 by
+7.1--26.2 percentage points and B2 by 26.3--44.6 points at every budget.
+The advantage over B1 is largest under tight
+budgets (25.1 and 26.2 points at 10 and 20\,MB, vs.\ 7.1--8.4 points above
+30\,MB). With only 10\,MB, \method{} already matches B1's accuracy at 50\,MB
+(72.64\% vs.\ 72.83\%), i.e., it reaches comparable accuracy with one fifth of
+the upload. This shows that sending a moderately compressed update from one
+well-chosen client and modality makes better use of the budget than sending
+heavily compressed updates from every client or uncompressed updates from a
+single client.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig_uci_budget_summary.png}
+  \caption{Final test accuracy of the three approaches under each upload budget on UCI HAR (mean of five seeds).}
+  \Description{Line plot of final test accuracy against upload budget (10 to 50 MB) for B1 (Independent Compression), B2 (MFedMC) and \method{}. \method{} is highest at every budget, rising from 72.6\% to 80.9\%; B1 rises from 47.6\% to 72.8\%, with most of the gain between 20 and 30 MB; B2 stays near 31--35\% until it reaches 54.6\% at 50 MB.}
+  \label{fig:uci_budget_summary}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig_mhealth_budget_summary.pdf}
+  \caption{Final test accuracy of the five approaches under each upload budget on mHealth (mean of five seeds).}
+  \Description{Line plot of final test accuracy against upload budget (5 to 25 MB) on mHealth for B1 (Independent Compression), B2 (MFedMC), B3 (PFMH), B4 (FL-FD) and \method{}. \method{} is highest from 10 MB onward, rising from 93.6\% to 97.2\%, but is below FL-FD at 5 MB (75.3\% vs.\ 78.7\%). FL-FD rises from 78.7\% to 94.0\%; B1 rises from 28.7\% to 77.9\%, with most of the gain between 10 and 15 MB; PFMH rises slowly from 24.8\% to 38.9\%; and MFedMC stays near 18--20\% at every budget.}
+  \label{fig:mhealth_budget_summary}
+\end{figure}
+
+\paragraph{Sensitivity to the budget.}
+Figure~\ref{fig:uci_budget_summary} highlights how differently the three
+approaches depend on the budget. \method{} is the least sensitive: its accuracy
+rises by only 8.2 points across a $5\times$ increase in budget (from 72.64\% to
+80.88\%) and improves at every step, so most of its accuracy is already
+available at the smallest budget. B1, in contrast, gains 25.3 points, but
+almost all of it comes from a single step between 20\,MB and 30\,MB, when its
+sketch widens from $3\times2{,}000$ to $3\times3{,}000$. This suggests that,
+because every client compresses its full gradient, B1's narrower sketches are
+too small to recover enough useful coordinates. B2 remains nearly flat at
+31--35\% up to 40\,MB and improves only at 50\,MB, because each additional
+round costs an entire uncompressed encoder. As a result, the gap between
+\method{} and B1 shrinks from about 25 points at 10--20\,MB to 7--8 points at
+30--50\,MB, while \method{} stays at least 26 points above B2 at every budget.
+\method{} therefore delivers the largest benefit exactly where communication is
+most constrained.
+
+
+\begin{table}[t]
+  \caption{Test accuracy (\%) of the five approaches under each cumulative upload budget on UCI HAR. Bold: best; underline: best baseline.}
+  \label{tab:uci_summary}
+  \centering
+  \footnotesize
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabular}{@{}l ccccc@{}}
+  \toprule
+   & \multicolumn{5}{c}{Cumulative upload budget (MB)} \\
+  \cmidrule(l){2-6}
+  Method & 10 & 20 & 30 & 40 & 50 \\
+  \midrule
+  B1 (IC)        & 47.55 & 50.13 & \underline{69.23} & \underline{72.39} & \underline{72.83} \\
+  B2 (MFedMC)    & 31.09 & 34.76 & 34.74 & 34.87 & 54.59 \\
+  B3 (PFMH)      & 36.60 & 47.98 & 53.26 & 54.64 & 54.96 \\
+  B4 (FedMobile) & \underline{48.30} & \underline{66.24} & 66.14 & 66.34 & 67.88 \\
+  \method{}      & \textbf{72.64} & \textbf{76.34} & \textbf{77.63} & \textbf{79.45} & \textbf{80.88} \\
+  \midrule
+  Gain over best baseline & +24.34 & +10.10 & +8.40 & +7.06 & +8.05 \\
+  \bottomrule
+  \end{tabular}
+  \end{table}
+
+  \begin{table}[t]
+    \caption{Test accuracy (\%) of the five approaches under each cumulative upload budget on mHealth. Bold: best; underline: best baseline. FedMobile uploads 6.21\,MB per round and cannot complete a round within 5\,MB.}
+    \label{tab:mhealth_summary}
+    \centering
+    \footnotesize
+    \setlength{\tabcolsep}{5pt}
+    \begin{tabular}{@{}l ccccc@{}}
+    \toprule
+     & \multicolumn{5}{c}{Cumulative upload budget (MB)} \\
+    \cmidrule(l){2-6}
+    Method & 5 & 10 & 15 & 20 & 25 \\
+    \midrule
+    B1 (IC)        & \underline{28.69} & \underline{46.25} & \underline{74.44} & \underline{77.94} & 77.06 \\
+    B2 (MFedMC)    & 18.08 & 18.04 & 18.06 & 19.98 & 19.35 \\
+    B3 (PFMH)      & 24.83 & 25.87 & 29.58 & 35.00 & 38.94 \\
+    B4 (FedMobile) & -- & 19.50 & 55.15 & 69.40 & \underline{83.71} \\
+    \method{}      & \textbf{75.25} & \textbf{93.63} & \textbf{95.87} & \textbf{96.85} & \textbf{97.15} \\
+    \midrule
+    Gain over best baseline & +46.56 & +47.38 & +21.43 & +18.91 & +13.44 \\
+    \bottomrule
+    \end{tabular}
+    \end{table}
+
+\begin{figure*}[t]
+  \centering
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_uci_cfg_10mb.png}
+    \caption{10\,MB upload budget}
+    \label{fig:uci_cfg_10mb}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_uci_cfg_20mb.png}
+    \caption{20\,MB upload budget}
+    \label{fig:uci_cfg_20mb}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_uci_cfg_30mb.png}
+    \caption{30\,MB upload budget}
+    \label{fig:uci_cfg_30mb}
+  \end{subfigure}
+
+  \vspace{4pt}
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_uci_cfg_40mb.png}
+    \caption{40\,MB upload budget}
+    \label{fig:uci_cfg_40mb}
+  \end{subfigure}\hspace{0.02\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_uci_cfg_50mb.png}
+    \caption{50\,MB upload budget}
+    \label{fig:uci_cfg_50mb}
+  \end{subfigure}
+  \caption{Test accuracy of different \method{} configurations versus cumulative upload on UCI HAR under five upload budgets. Each curve is one combination of upload-sketch width and fraction of clients selected per round (mean of five seeds); Table~\ref{tab:uci_full} lists the final accuracies.}
+  \Description{Five line plots of average test accuracy against cumulative upload on UCI HAR for 10, 20, 30, 40 and 50 MB budgets. Each plot shows seven to nine \method{} configurations that differ in upload-sketch width (2,500 to 30,000 columns) and fraction of clients per round (10\% to 60\%). Configurations with fewer clients per round, and hence more rounds, reach higher final accuracy.}
+  \label{fig:uci_configs}
+\end{figure*}
+
+% 
+
+\begin{figure*}[t]
+  \centering
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/HybridV2_mhealth_5MB_all_configs_mean.png}
+    \caption{5\,MB upload budget}
+    \label{fig:mhealth_cfg_5mb}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/HybridV2_mhealth_10MB_all_configs_mean.png}
+    \caption{10\,MB upload budget}
+    \label{fig:mhealth_cfg_10mb}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/HybridV2_mhealth_15MB_all_configs_mean.png}
+    \caption{15\,MB upload budget}
+    \label{fig:mhealth_cfg_15mb}
+  \end{subfigure}
+
+  \vspace{4pt}
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/HybridV2_mhealth_20MB_all_configs_mean.png}
+    \caption{20\,MB upload budget}
+    \label{fig:mhealth_cfg_20mb}
+  \end{subfigure}\hspace{0.02\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/HybridV2_mhealth_25MB_all_configs_mean.png}
+    \caption{25\,MB upload budget}
+    \label{fig:mhealth_cfg_25mb}
+  \end{subfigure}
+  \caption{Test accuracy of different \method{} configurations versus cumulative upload on mHealth under five upload budgets. Each curve is one combination of upload-sketch width, fraction of clients selected per round and number of modalities uploaded (mean of five seeds); Table~\ref{tab:mhealth_full} lists the final accuracies.}
+  \Description{Five line plots of average test accuracy against cumulative upload on mHealth for 5, 10, 15, 20 and 25 MB budgets. Each plot shows the \method{} configurations that differ in upload-sketch width, clients per round and modalities uploaded. Configurations with one client per round reach the highest final accuracy.}
+  \label{fig:mhealth_configs}
+\end{figure*}
+
+\paragraph{Effect of the configuration of \method{}.}
+Table~\ref{tab:uci_summary} and Figure~\ref{fig:uci_budget_bars} summarize the accuracy of the three approaches at
+each budget, i.e., the end points of the curves in
+Figure~\ref{fig:uci_budgets} and the values plotted in
+Figure~\ref{fig:uci_budget_summary}. Table~\ref{tab:uci_full} lists every
+configuration of \method{} that we evaluated, and Figure~\ref{fig:uci_configs}
+plots their accuracy curves, which shows how \method{} should spend a fixed
+budget. Two trends hold at every budget. First, for a fixed sketch size,
+selecting fewer clients per round is always better: since each round costs
+$K$ sketches, a smaller $K$ buys proportionally more rounds, and accuracy
+decreases monotonically as $K$ grows from 1 to 4 (e.g., 77.80\%, 74.87\% and
+69.71\% for $K=1,2,4$ with a $3\times5{,}000$ sketch at 20\,MB). Second, with
+one client per round, a narrower sketch and more rounds beat a wider sketch and
+fewer rounds (e.g., 80.93\% with $3\times10{,}000$ over 340 rounds vs.\ 77.05\%
+with $3\times30{,}000$ over 110 rounds at 40\,MB). In other words, under a
+tight budget, frequent updates matter more than recovering each update
+precisely. \method{} is also robust to its configuration: all 42
+configurations outperform B2, and 36 of them outperform B1 at the same budget.
+The six exceptions all run at most 55 rounds, because they combine several
+clients per round with a wide sketch, which confirms that the number of rounds
+is the main factor.
+
+\paragraph{Convergence of different configurations.}
+Figure~\ref{fig:uci_configs} shows how each combination of sketch width and
+clients per round spends the budget over time. Within each budget, all
+configurations follow similar curves during the first few megabytes, but they
+separate as the upload grows. Configurations with one client per round
+(10\%) and the narrowest sketch, which run the most rounds (170--340), take the
+lead early and keep it until the end of the budget; this configuration is the
+most accurate at every budget, reaching 72.51\%, 77.80\%, 77.66\%, 80.93\% and
+80.85\% at 10, 20, 30, 40 and 50\,MB, respectively. Their curves fluctuate more
+from round to round, since each update comes from a single client with highly
+non-IID data, but the higher update frequency more than compensates. In
+contrast, configurations that select 40\% or more of the clients per round
+with a wide sketch run only 21--55 rounds; their curves are smoother but have
+few points, and they fall behind and finish 8--23 points lower at the same
+budget (e.g., 57.42\% for $3\times20{,}000$ with 40\% of clients vs.\ 77.80\%
+for $3\times5{,}000$ with 10\% at 20\,MB). Since the best configuration leads
+over most of the budget rather than only at its end, its advantage holds for
+any intermediate upload, not just for the budget it was tuned for.
+
+\subsection{Effect of Non-IID Levels}
+
+
+\FloatBarrier
+\section{Conclusion}
+
+
+\begin{acks}
+This is acknowledgement.
+\end{acks}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\end{document}
+\endinput
