@@ -50,8 +50,8 @@ FetchSGD/
 Requires Python 3.10+ and a CUDA GPU; the run scripts default to `--device cuda`.
 
 ```bash
-git clone https://github.com/niloy-ahashan/FetchSGD.git
-cd FetchSGD
+git clone https://github.com/niloy-ahashan/mmfl_sketch.git
+cd mmfl_sketch
 
 python -m venv venv
 source venv/bin/activate

@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{5}
+\begin{thebibliography}{11}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -36,12 +36,43 @@
 \providecommand\natexlab[1]{#1}
 \providecommand\showeprint[2][]{arXiv:#2}
 
+\bibitem[Anguita et~al\mbox{.}(2013)]%
+        {anguita2013public}
+\bibfield{author}{\bibinfo{person}{Davide Anguita}, \bibinfo{person}{Alessandro Ghio}, \bibinfo{person}{Luca Oneto}, \bibinfo{person}{Xavier Parra}, {and} \bibinfo{person}{Jorge~Luis Reyes-Ortiz}.} \bibinfo{year}{2013}\natexlab{}.
+\newblock \showarticletitle{A Public Domain Dataset for Human Activity Recognition Using Smartphones}. In \bibinfo{booktitle}{\emph{Proceedings of the 21st European Symposium on Artificial Neural Networks, Computational Intelligence and Machine Learning (ESANN)}}. \bibinfo{address}{Bruges, Belgium}.
+\newblock
+
+
+\bibitem[Banos et~al\mbox{.}(2014)]%
+        {banos2014mhealthdroid}
+\bibfield{author}{\bibinfo{person}{Oresti Banos}, \bibinfo{person}{Rafael Garcia}, \bibinfo{person}{Juan~A. Holgado-Terriza}, \bibinfo{person}{Miguel Damas}, \bibinfo{person}{Hector Pomares}, \bibinfo{person}{Ignacio Rojas}, \bibinfo{person}{Alejandro Saez}, {and} \bibinfo{person}{Claudia Villalonga}.} \bibinfo{year}{2014}\natexlab{}.
+\newblock \showarticletitle{{mHealthDroid}: A Novel Framework for Agile Development of Mobile Health Applications}. In \bibinfo{booktitle}{\emph{Ambient Assisted Living and Daily Activities (IWAAL)}} \emph{(\bibinfo{series}{Lecture Notes in Computer Science})}. \bibinfo{publisher}{Springer}, \bibinfo{pages}{91--98}.
+\newblock
+\href{https://doi.org/10.1007/978-3-319-13105-4_14}{doi:\nolinkurl{10.1007/978-3-319-13105-4_14}}
+
+
+\bibitem[Goldberger et~al\mbox{.}(2000)]%
+        {goldberger2000physionet}
+\bibfield{author}{\bibinfo{person}{Ary~L. Goldberger}, \bibinfo{person}{Luis A.~N. Amaral}, \bibinfo{person}{Leon Glass}, \bibinfo{person}{Jeffrey~M. Hausdorff}, \bibinfo{person}{Plamen~Ch. Ivanov}, \bibinfo{person}{Roger~G. Mark}, \bibinfo{person}{Joseph~E. Mietus}, \bibinfo{person}{George~B. Moody}, \bibinfo{person}{Chung-Kang Peng}, {and} \bibinfo{person}{H.~Eugene Stanley}.} \bibinfo{year}{2000}\natexlab{}.
+\newblock \showarticletitle{{PhysioBank}, {PhysioToolkit}, and {PhysioNet}: Components of a New Research Resource for Complex Physiologic Signals}.
+\newblock \bibinfo{journal}{\emph{Circulation}} \bibinfo{volume}{101}, \bibinfo{number}{23} (\bibinfo{year}{2000}), \bibinfo{pages}{e215--e220}.
+\newblock
+\href{https://doi.org/10.1161/01.CIR.101.23.e215}{doi:\nolinkurl{10.1161/01.CIR.101.23.e215}}
+
+
 \bibitem[Hsu et~al\mbox{.}(2019)]%
         {hsu2019measuring}
 \bibfield{author}{\bibinfo{person}{Tzu-Ming~Harry Hsu}, \bibinfo{person}{Hang Qi}, {and} \bibinfo{person}{Matthew Brown}.} \bibinfo{year}{2019}\natexlab{}.
 \newblock \bibinfo{title}{Measuring the Effects of Non-Identical Data Distribution for Federated Visual Classification}.
 \newblock
 \showeprint[arxiv]{1909.06335}~[cs.LG]
+
+
+\bibitem[Ji et~al\mbox{.}(2026)]%
+        {ji2026shapccs}
+\bibfield{author}{\bibinfo{person}{Shuo Ji}, \bibinfo{person}{Jie Hu}, \bibinfo{person}{Zhouqiao He}, \bibinfo{person}{Zijie Zhao}, \bibinfo{person}{Tianrui Li}, {and} \bibinfo{person}{Jie Xu}.} \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{{ShapCCS}: Shapley-Driven Client Coreset Selection in Federated Learning}. In \bibinfo{booktitle}{\emph{Proceedings of the 43rd International Conference on Machine Learning (ICML)}} \emph{(\bibinfo{series}{Proceedings of Machine Learning Research}, Vol.~\bibinfo{volume}{306})}. \bibinfo{publisher}{PMLR}, \bibinfo{address}{Seoul, South Korea}.
+\newblock
 
 
 \bibitem[Liu et~al\mbox{.}(2025)]%
@@ -59,12 +90,31 @@
 \newblock
 
 
-\bibitem[Yuan et~al\mbox{.}(2024)]%
-        {yuan2024mfedmc}
-\bibfield{author}{\bibinfo{person}{Liangqi Yuan}, \bibinfo{person}{Dong-Jun Han}, \bibinfo{person}{Su Wang}, \bibinfo{person}{Devesh Upadhyay}, {and} \bibinfo{person}{Christopher~G. Brinton}.} \bibinfo{year}{2024}\natexlab{}.
-\newblock \bibinfo{title}{Communication-Efficient Multimodal Federated Learning: Joint Modality and Client Selection}.
+\bibitem[Wagner et~al\mbox{.}(2020)]%
+        {wagner2020ptbxl}
+\bibfield{author}{\bibinfo{person}{Patrick Wagner}, \bibinfo{person}{Nils Strodthoff}, \bibinfo{person}{Ralf-Dieter Bousseljot}, \bibinfo{person}{Dieter Kreiseler}, \bibinfo{person}{Fatima~I. Lunze}, \bibinfo{person}{Wojciech Samek}, {and} \bibinfo{person}{Tobias Schaeffter}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{{PTB-XL}, a Large Publicly Available Electrocardiography Dataset}.
+\newblock \bibinfo{journal}{\emph{Scientific Data}} \bibinfo{volume}{7}, \bibinfo{number}{1} (\bibinfo{year}{2020}), \bibinfo{pages}{154}.
 \newblock
-\showeprint[arxiv]{2401.16685}~[cs.LG]
+\href{https://doi.org/10.1038/s41597-020-0495-6}{doi:\nolinkurl{10.1038/s41597-020-0495-6}}
+
+
+\bibitem[Wagner et~al\mbox{.}(2022)]%
+        {wagner2022ptbxldata}
+\bibfield{author}{\bibinfo{person}{Patrick Wagner}, \bibinfo{person}{Nils Strodthoff}, \bibinfo{person}{Ralf-Dieter Bousseljot}, \bibinfo{person}{Wojciech Samek}, {and} \bibinfo{person}{Tobias Schaeffter}.} \bibinfo{year}{2022}\natexlab{}.
+\newblock \bibinfo{title}{{PTB-XL}, a Large Publicly Available Electrocardiography Dataset (version 1.0.3)}.
+\newblock \bibinfo{howpublished}{PhysioNet}.
+\newblock
+\href{https://doi.org/10.13026/kfzx-aw45}{doi:\nolinkurl{10.13026/kfzx-aw45}}
+
+
+\bibitem[Yuan et~al\mbox{.}(2026)]%
+        {yuan2024mfedmc}
+\bibfield{author}{\bibinfo{person}{Liangqi Yuan}, \bibinfo{person}{Dong-Jun Han}, \bibinfo{person}{Su Wang}, \bibinfo{person}{Devesh Upadhyay}, {and} \bibinfo{person}{Christopher~G. Brinton}.} \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{Communication-Efficient Multimodal Federated Learning: Joint Modality and Client Selection}.
+\newblock \bibinfo{journal}{\emph{IEEE Transactions on Mobile Computing}} \bibinfo{volume}{25}, \bibinfo{number}{8} (\bibinfo{date}{Aug.} \bibinfo{year}{2026}), \bibinfo{pages}{12780--12796}.
+\newblock
+\href{https://doi.org/10.1109/TMC.2026.3673697}{doi:\nolinkurl{10.1109/TMC.2026.3673697}}
 
 
 \bibitem[Zuo et~al\mbox{.}(2025)]%

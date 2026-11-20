@@ -58,3 +58,4 @@ FL-FD/dataset/camera/
 
 # Nested git metadata (treat subprojects as plain source trees)
 **/.git/
+PEPSY/deps/

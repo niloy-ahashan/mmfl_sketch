@@ -96,7 +96,7 @@ def compute_client_priority(
     client_losses,
     client_last_selected_round,
     client_weights,
-    prefer_higher_loss=False,
+    prefer_higher_loss=True,
 ):
     loss = np.asarray(client_losses, dtype=float)
     if np.all(np.isnan(loss)):

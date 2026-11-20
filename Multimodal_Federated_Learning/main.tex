@@ -244,46 +244,55 @@ All experiments were run on a single workstation with an Intel Core i7-13700 CPU
  & & & Gyroscope$^{2}$ & 213 & \\
 \midrule
 \multirow{4}{*}{mHealth} & \multirow{4}{*}{\shortstack{10\\(10 subjects)}} & \multirow{4}{*}{\shortstack{12 physical\\activities}}
-  & Accelerometer$^{3}$ & 177 & \multirow{4}{*}{\shortstack{3,681 /\\1,542}} \\
+  & Accelerometer$^{3}$ & 177 & \multirow{4}{*}{\shortstack{4,188 /\\1,035}} \\
  & & & Gyroscope$^{3}$ & 118 & \\
  & & & Magnetometer$^{3}$ & 118 & \\
  & & & ECG$^{3}$ & 43 & \\
+\midrule
+\multirow{2}{*}{PTB-XL} & \multirow{2}{*}{\shortstack{10\\(14,446 patients)}} & \multirow{2}{*}{\shortstack{5 cardiac\\diagnoses}}
+  & Limb leads$^{4}$ & 113 & \multirow{2}{*}{\shortstack{12,763 /\\3,220}} \\
+ & & & Chest leads$^{4}$ & 113 & \\
 \bottomrule
 \end{tabular}
 
 \vspace{2pt}
 \parbox{\columnwidth}{\scriptsize
-$^{1}$ Training windows are split across $N=10$ clients by a Dirichlet partition ($\alpha=0.1$), not by subject.\\
+$^{1}$ Training samples (windows for UCI HAR and mHealth, ECG records for PTB-XL) are split across $N=10$ clients by a Dirichlet partition ($\alpha=0.1$), not by subject or patient.\\
 $^{2}$ Dimension of the input features. UCI HAR: the 561 time- and frequency-domain features of each window, split by source sensor.\\
-$^{3}$ Accelerometer on chest, left ankle and right lower arm; gyroscope and magnetometer on ankle and arm; 2-lead ECG on chest. mHealth features: 14 time-domain statistics per axis and magnitude, plus pairwise inter-axis correlations.}
+$^{3}$ Accelerometer on chest, left ankle and right lower arm; gyroscope and magnetometer on ankle and arm; 2-lead ECG on chest. mHealth features: 14 time-domain statistics per axis and magnitude, plus pairwise inter-axis correlations.\\
+$^{4}$ 10\,s 12-lead ECGs at 100\,Hz with exactly one diagnostic superclass (NORM, MI, STTC, CD, HYP). Limb leads: I, II, III, aVR, aVL, aVF; chest leads: V1--V6. Each group: 14 time-domain statistics per lead and for the magnitude channel, plus pairwise inter-lead correlations. Official patient-wise folds (1--8 train, 9--10 test).}
 \end{table}
 
 \textbf{Datasets.}
-We evaluate the performance on two multimodal sensing applications (i.e., human activity recognition benchmarks), summarized in Table~\ref{tab:datasets}.
+We evaluate the performance on three multimodal sensing applications, two human activity recognition benchmarks and one electrocardiogram (ECG) diagnosis benchmark, summarized in Table~\ref{tab:datasets}.
 
 \begin{enumerate}
   \item \textbf{Smartphone-based Activity Recognition.}
-  The UCI Human Activity Recognition dataset (UCI HAR for short) is used for recognizing daily activities from the inertial sensors of a waist-mounted smartphone. It was collected from 30 volunteers performing 6 activities (walking, walking upstairs, walking downstairs, sitting, standing and laying). Signals are sampled at 50\,Hz and segmented into 2.56\,s windows with 50\% overlap, and each window is described by 561 time- and frequency-domain features. We split each window's features into two modalities by their source sensor: an accelerometer modality (348-D) and a gyroscope modality (213-D). The dataset includes 7,352 and 2,947 windows for training and test, respectively, following the original subject-disjoint split.
+  The UCI Human Activity Recognition dataset~\cite{anguita2013public} (UCI HAR for short) is used for recognizing daily activities from the inertial sensors of a waist-mounted smartphone. It was collected from 30 volunteers performing 6 activities (walking, walking upstairs, walking downstairs, sitting, standing and laying). Signals are sampled at 50\,Hz and segmented into 2.56\,s windows with 50\% overlap, and each window is described by 561 time- and frequency-domain features. We split each window's features into two modalities by their source sensor: an accelerometer modality (348-D) and a gyroscope modality (213-D). The dataset includes 7,352 and 2,947 windows for training and test, respectively, following the original subject-disjoint split.
 
   \item \textbf{Wearable Health Monitoring.}
-  The mHealth dataset records body motion and vital signs from 10 subjects performing 12 physical activities. Shimmer2 sensors are placed on the chest, left ankle and right lower arm, sampled at 50\,Hz. We discard the null class and segment each contiguous activity run into windows of 128 samples (2.56\,s) with 50\% overlap. For every sensor axis and its magnitude channel we extract 14 time-domain statistics (e.g., mean, standard deviation, range, skewness, kurtosis, energy and zero-crossing rate), plus pairwise inter-axis correlations. This yields four modalities: accelerometer (chest, ankle and arm; 177-D), gyroscope (ankle and arm; 118-D), magnetometer (ankle and arm; 118-D) and 2-lead ECG (chest; 43-D). Features are z-score normalized using training statistics. To prevent overlapping windows from leaking across the split, we assign whole activity runs to either training or test, which gives 3,681 training and 1,542 test windows.
+  The mHealth dataset~\cite{banos2014mhealthdroid} records body motion and vital signs from 10 subjects performing 12 physical activities. Shimmer2 sensors are placed on the chest, left ankle and right lower arm, sampled at 50\,Hz. We discard the null class and segment each contiguous activity run into windows of 128 samples (2.56\,s) with 50\% overlap. For every sensor axis and its magnitude channel we extract 14 time-domain statistics (e.g., mean, standard deviation, range, skewness, kurtosis, energy and zero-crossing rate), plus pairwise inter-axis correlations. This yields four modalities: accelerometer (chest, ankle and arm; 177-D), gyroscope (ankle and arm; 118-D), magnetometer (ankle and arm; 118-D) and 2-lead ECG (chest; 43-D). Features are z-score normalized using training statistics. We split by subject, using subjects 1--8 for training and subjects 9--10 for test, so overlapping windows cannot leak across the split; this gives 4,188 training and 1,035 test windows.
+
+  \item \textbf{ECG-based Cardiac Diagnosis.}
+  The PTB-XL dataset~\cite{wagner2020ptbxl,wagner2022ptbxldata}, distributed through PhysioNet~\cite{goldberger2000physionet}, contains 21,799 clinical 12-lead electrocardiograms (ECGs) of 10\,s from 18,869 patients; we use the version sampled at 100\,Hz. Each record is annotated with diagnostic statements that map to 5 superclasses: normal ECG (NORM), myocardial infarction (MI), ST/T change (STTC), conduction disturbance (CD) and hypertrophy (HYP). We keep the records with exactly one superclass whose statement likelihood is at least 50\%, which makes the task single-label and leaves 15,983 records from 14,446 patients. We split the leads into two modalities by their placement: the 6 limb leads (I, II, III, aVR, aVL, aVF) and the 6 chest leads (V1--V6). For each modality we compute the same features as for mHealth, i.e., 14 time-domain statistics per lead and for the magnitude channel, plus the 15 pairwise inter-lead correlations, which gives a 113-D vector per modality. Values that are undefined for flat leads are set to zero, and features are z-score normalized using training statistics. Following the official patient-wise folds (1--8 for training, 9--10 for test), the dataset includes 12,763 training and 3,220 test records. The classes are strongly imbalanced: NORM covers 57\% of the training records and HYP only 2\%.
 \end{enumerate}
 
 \textbf{Models.}
-All models share the same per-modality encoder: a feature extractor with two fully-connected layers ($d_m \rightarrow 512 \rightarrow 512$, with ReLU and dropout of 0.3), followed by a feature refiner with two fully-connected layers ($512 \rightarrow 512 \rightarrow 512$) whose sigmoid output gates the extracted features element-wise. The three designs differ in how they fuse the modalities. \method{} fuses modalities with a fixed Count Sketch. Each refined 512-D feature vector is hashed into a $2 \times 128$ sketch table, and the tables of all modalities are summed into a 256-D fused representation. An integrator with two fully-connected layers ($256 \rightarrow 512 \rightarrow 512$) and a linear classifier follow. The fusion sketch has no trainable parameters. The model has 2.26M parameters (9.05\,MB) on UCI HAR and 3.79M parameters (15.2\,MB) on mHealth.
+All models share the same per-modality encoder (FedMobile and ShapCCS use a narrower, 64-D version): a feature extractor with two fully-connected layers ($d_m \rightarrow 512 \rightarrow 512$, with ReLU and dropout of 0.3), followed by a feature refiner with two fully-connected layers ($512 \rightarrow 512 \rightarrow 512$) whose sigmoid output gates the extracted features element-wise. The approaches differ in how they fuse the modalities. \method{} fuses modalities with a fixed Count Sketch. Each refined 512-D feature vector is hashed into a $2 \times 128$ sketch table, and the tables of all modalities are summed into a 256-D fused representation. An integrator with two fully-connected layers ($256 \rightarrow 512 \rightarrow 512$) and a linear classifier follow. The fusion sketch has no trainable parameters. The model has 2.26M parameters (9.05\,MB) on UCI HAR and 3.79M parameters (15.2\,MB) on mHealth. On PTB-XL, whose two modalities have only 113 features each, we use a hidden size of 256 instead of 512: the extractor and refiner become $113 \rightarrow 256 \rightarrow 256$ and $256 \rightarrow 256 \rightarrow 256$, the refined 256-D features are hashed into the same $2 \times 128$ table, and the integrator becomes $256 \rightarrow 256 \rightarrow 256$. The resulting model has 0.59M parameters (2.34\,MB).
 
 \textbf{Settings of Statistical Heterogeneity.}
-In the experiments, the training samples are distributed across $N = 10$ clients following a label-based Dirichlet distribution~\cite{hsu2019measuring}. For each class $k$, we draw a vector $\mathbf{p}_k \sim \mathrm{Dir}(\alpha\mathbf{1}_N)$ that gives the share of class $k$ held by each client, and each training sample of class $k$ is assigned to client $j$ with probability $p_{k,j}$. The concentration parameter $\alpha > 0$ controls how identical the clients are. As $\alpha \to \infty$, every client receives each class in the same proportion as the global training set (i.e., IID). As $\alpha \to 0$, each class concentrates on a single client, which is a high degree of statistical heterogeneity. We set $\alpha = 0.1$ to create a highly non-IID setting, and fix the partition across all methods with a common random seed, so every method trains on exactly the same client datasets.
+In the experiments, the training samples are distributed across $N = 10$ clients following a label-based Dirichlet distribution~\cite{hsu2019measuring}. For each class $k$, we draw a vector $\mathbf{p}_k \sim \mathrm{Dir}(\alpha\mathbf{1}_N)$ that gives the share of class $k$ held by each client, and each training sample of class $k$ is assigned to client $j$ with probability $p_{k,j}$. The concentration parameter $\alpha > 0$ controls how identical the clients are. As $\alpha \to \infty$, every client receives each class in the same proportion as the global training set (i.e., IID). As $\alpha \to 0$, each class concentrates on a single client, which is a high degree of statistical heterogeneity. We set $\alpha = 0.1$ to create a highly non-IID setting, and fix the partition of each dataset across all methods, so every method trains on exactly the same client datasets. We use seed 42 for UCI HAR and mHealth; on PTB-XL, seed 42 leaves one client without any data, so we use seed 44, for which every client receives data.
 
 With $\alpha = 0.1$, the clients are skewed both in label distribution and in dataset size:
 \begin{itemize}
   \item \textit{UCI HAR:} each client holds between 1 and 5 of the 6 activities, and the most frequent activity makes up 42\% to 100\% of a client's data. Client datasets range from 1 to 1,665 samples (735 on average).
-  \item \textit{mHealth:} each client holds between 3 and 8 of the 12 activities, with the most frequent activity making up 23\% to 76\% of its data. Client datasets range from 38 to 820 samples (368 on average).
+  \item \textit{mHealth:} each client holds between 3 and 9 of the 12 activities, with the most frequent activity making up 25\% to 81\% of its data. Client datasets range from 38 to 1,028 samples (419 on average).
+  \item \textit{PTB-XL:} each client holds between 1 and 4 of the 5 diagnostic superclasses, and the most frequent superclass makes up 56\% to 100\% of a client's data. Client datasets range from 71 to 4,258 records (1,276 on average).
 \end{itemize}
-Measured by the KL divergence between each client's label distribution and the global one, the average divergence is 1.24 on UCI HAR and 1.37 on mHealth. The test sets are not partitioned: all methods are evaluated on the same global test set of each dataset (2,947 samples for UCI HAR and 1,542 for mHealth), which covers all classes.
+Measured by the KL divergence between each client's label distribution and the global one, the average divergence is 1.24 on UCI HAR, 1.39 on mHealth and 1.32 on PTB-XL. The test sets are not partitioned: all methods are evaluated on the same global test set of each dataset (2,947 samples for UCI HAR, 1,035 for mHealth and 3,220 for PTB-XL), which covers all classes.
 
 \textbf{Baselines.}
-We measure the effectiveness of our work through a comparison with two approaches.
+We measure the effectiveness of our work through a comparison with five approaches, all of which are run on every dataset (UCI HAR, mHealth and PTB-XL) with the same client partition and test set.
 \begin{enumerate}
   \item \textbf{Independent Compression}
   is a communication-efficient multimodal FL approach that treats multimodal fusion and gradient compression as two independent steps. Modalities are fused by element-wise summation of their refined features. Each client's full model gradient is then compressed with FetchSGD~\cite{rothchild2020fetchsgd}, i.e., it is projected into a Count Sketch before upload, and the server recovers the top-$k$ coordinates from the aggregated sketch, with momentum and error feedback applied in sketch space. In every round, all clients participate and every modality is uploaded, so the compression is uniform across modalities and ignores how useful each modality or client is to the model.
@@ -295,9 +304,13 @@ We measure the effectiveness of our work through a comparison with two approache
   is a prototype-based federated multimodal hashing approach, in which clients
   share class prototypes instead of their full data, with a prototype
   completion strategy to handle class imbalance and statistical heterogeneity
-  across clients. It was proposed for multimodal retrieval; we adapt it to
-  activity classification.
-  % TODO: describe the adaptation and exactly what each client uploads per round.
+  across clients. It was proposed for multimodal retrieval, so we adapt it to
+  classification: each client trains the official PFMH model on its local data
+  and, in addition, a linear classifier on top of the shared hash
+  representation, whose gradient does not flow back into PFMH. In every round,
+  all 10 clients upload their full model, including the classifier, and the
+  server averages them (e.g., 0.37\,MB per client on PTB-XL). Test accuracy is
+  that of the trained classifier.
 
   % \item \textbf{FL-FD}~\cite{qi2023flfd}
   % is a federated learning approach with multimodal data fusion, originally
@@ -314,21 +327,45 @@ We measure the effectiveness of our work through a comparison with two approache
   aggregates the updates with weights based on each client's estimated
   contribution, measured on a small proxy dataset, while the generators are
   clustered and combined using Shapley-value weights.
-  % TODO: state how many clients participate per round in our runs, and how it
-  % is applied in our setting (all modalities are present on UCI HAR and mHealth).
+  In our runs, all 10 clients participate in every round. Following the
+  released code, the first modality is removed from 80\% of each local batch to
+  simulate incomplete modalities, so FedMobile trains with less complete data
+  than the other approaches on all three datasets. Each client trains for 5
+  local epochs on UCI HAR and mHealth and 1 epoch on PTB-XL. Its per-modality
+  extractor--refiner encoders produce 64-D features, which are concatenated
+  and fed to a linear classifier.
+
+  \item \textbf{ShapCCS}~\cite{ji2026shapccs}
+  is a client-level coreset selection approach for FL, which reduces
+  computation and communication by training on only the most useful clients.
+  It scores each client by its gradient projection Shapley value (GPSV), i.e.,
+  the Shapley value of the client's update projected onto the aggregated
+  update, which can be computed exactly over all coalitions. Training follows
+  FedAvg. During the first 10 rounds, clients are selected in turn and their
+  GPSV is accumulated; the server then splits a data budget among the clients
+  in proportion to their GPSV, removes the clients whose share falls below a
+  threshold, and shrinks the data of the remaining clients with a data-level
+  coreset method. Later rounds sample only from the remaining clients. ShapCCS
+  does not compress updates: each selected client uploads its full model, so
+  the upload is reduced only by selecting fewer clients. We follow the released
+  code and use the same extractor--refiner encoder design as the other methods, with
+  2 of the 10 clients per round, which drops to 1 once clients are removed. The
+  data budget is 70\% of the training data on UCI HAR and mHealth and 30\% on
+  PTB-XL. At 5\,MB on mHealth, the budget allows only 8 rounds, so clients are
+  scored for 2 rounds instead of 10.
 \end{enumerate}
 
 \textbf{Metrics.}
 We adopt the following metrics to evaluate the performance of our work and the baselines.
 \begin{enumerate}
   \item \textbf{Test Accuracy}
-  reflects the accuracy of the global model trained by each approach, measured as the proportion of the global test set that the model classifies correctly. We evaluate the global model on the same held-out test set after every communication round and record the final accuracy for all approaches. For MFedMC, which keeps a separate model per modality, the prediction is the class with the highest sum of the unimodal log-probabilities.
+  reflects the accuracy of the global model trained by each approach, measured as the proportion of the global test set that the model classifies correctly. We evaluate the global model on the same held-out test set after every communication round and record the final accuracy for all approaches. For MFedMC, which keeps a separate model per modality, the prediction is the class with the highest sum of the unimodal log-probabilities. On PTB-XL, the classes are imbalanced and NORM makes up 56.3\% of the test set, so a model that always predicts NORM would already reach 56.3\%; we use this majority-class accuracy as a reference when comparing approaches on PTB-XL.
 
   \item \textbf{Communication Traffic}
   is the total volume of data exchanged between the clients and the server during training, counting both uploads and downloads, with every transmitted value stored as a 32-bit float.
   \begin{itemize}
-    \item \textit{Upload:} for \method{} and Independent Compression, each participating client uploads one Count Sketch table (rows $\times$ columns values). For MFedMC, each selected client uploads the full weights of each selected modality model.
-    \item \textit{Download:} for the sketch-based methods, a client downloads only the model coordinates that changed since it last participated. For MFedMC, every client downloads all modality models in every round.
+    \item \textit{Upload:} for \method{} and Independent Compression, each participating client uploads one Count Sketch table (rows $\times$ columns values). For MFedMC, each selected client uploads the full weights of each selected modality model. For PFMH and FedMobile, every client uploads its full model in every round, and FedMobile additionally uploads its generator. For ShapCCS, each selected client uploads its full model.
+    \item \textit{Download:} for the sketch-based methods, a client downloads only the model coordinates that changed since it last participated. For MFedMC, every client downloads all modality models in every round. For PFMH and FedMobile, every client downloads the full global model (and, for FedMobile, the generator) in every round after the first. For ShapCCS, each selected client downloads the full global model.
   \end{itemize}
   We report the cumulative traffic in megabytes (MB).
 
@@ -336,19 +373,19 @@ We adopt the following metrics to evaluate the performance of our work and the b
   
 \end{enumerate}
 
-% TODO: update this paragraph to the budget sweep in Table~\ref{tab:uci_full}
-% (sketch sizes, clients per round, rounds and seeds 42--46); the values below are from the earlier runs.
-
 \textbf{Experimental Parameters.}
 All approaches use $N=10$ clients, the extractor--refiner encoder with a 512-D
-hidden size and a dropout rate of 0.3, and the partition and test sets described
-above. On UCI HAR, we compare the approaches under five cumulative upload
-budgets of 10, 20, 30, 40 and 50\,MB. Since each approach transmits a different
-amount per round, the budget fixes the number of rounds $T$ that each
-configuration can run (Table~\ref{tab:uci_full}).
+hidden size (256-D on PTB-XL) and a dropout rate of 0.3, and the partition and test sets described
+above. The exceptions are FedMobile and ShapCCS, whose encoders produce 64-D
+features on all three datasets. On UCI HAR, we compare the approaches under five cumulative upload
+budgets of 10, 20, 30, 40 and 50\,MB, on mHealth under five budgets of 5, 10,
+15, 20 and 25\,MB, and on PTB-XL under four budgets of 10, 20, 30 and 40\,MB.
+Since each approach transmits a different amount per round, the budget fixes
+the number of rounds $T$ that each configuration can run
+(Tables~\ref{tab:uci_full}, \ref{tab:mhealth_full} and~\ref{tab:ptbxl_full}).
 \begin{itemize}
   \item \textit{\method:} each selected client uploads the gradient of its
-  top-1 of the two modalities (top-2 of four on mHealth), computed over its full
+  top-ranked modalities (one of two on UCI HAR and PTB-XL, one to three of four on mHealth), computed over its full
   local dataset. The modality priority weights SHAP value, model size and
   recency equally (1/3 each), and the fusion sketch has 2 rows and 128 columns.
   The uploaded gradient is compressed into a Count Sketch with 3 rows, and the
@@ -360,27 +397,58 @@ configuration can run (Table~\ref{tab:uci_full}).
   budget, i.e., $T \approx B / (4\,r\,c\,K)$ bytes for a budget $B$ and an
   $r\times c$ sketch, which gives between 21 and 340 rounds. This yields 42
   configurations across the five budgets, all listed in
-  Table~\ref{tab:uci_full}. On mHealth, two clients (20\%) are selected per
-  round with a $3\times5{,}000$ sketch for 210 rounds.
+  Table~\ref{tab:uci_full}. On mHealth, we additionally sweep the number of
+  uploaded modalities: three sketch widths per budget (from $3\times2{,}500$ at
+  5\,MB to $3\times30{,}000$ at 25\,MB), $K\in\{1,2,4\}$ (10--40\%), and, with
+  one client per round, 1, 2 or 3 of the four modalities (3 with two or four
+  clients). This gives 75 configurations with 11 to 168 rounds, all listed in
+  Table~\ref{tab:mhealth_full}. On PTB-XL, clients are
+  selected uniformly at random, $K\in\{3,5,8\}$ (30--80\%), and the sketch
+  width ranges from 1,000 to 10,000 columns (three widths per budget), which
+  gives 36 configurations with 27 to 450 rounds.
   \item \textit{Independent Compression:} all 10 clients participate in every
   round and upload a sketch of their full-batch gradient for 85 rounds. On UCI
   HAR, the sketch has 3 rows and its width grows with the budget, from 1,000
   columns at 10\,MB to 5,000 at 50\,MB (1,000 columns per 10\,MB). On mHealth,
-  it uses a $3\times5{,}000$ sketch for 42 rounds. It uses the same $k$,
+  it runs 42 rounds and its sketch grows from $3\times1{,}000$ at 5\,MB to
+  $3\times5{,}000$ at 25\,MB (1,000 columns per 5\,MB). On PTB-XL, its sketch grows
+  from $3\times2{,}000$ at 10\,MB to $3\times5{,}000$ at 40\,MB, for 42, 56, 63
+  and 68 rounds, respectively. It uses the same $k$,
   momentum and error feedback as \method.
   \item \textit{MFedMC:} every selected client trains each unimodal model for
   5 local epochs of SGD, with a fixed learning rate of 0.05 and a batch size of
-  32, and uploads its top-1 (UCI HAR) or top-2 (mHealth) modality models
-  uncompressed, with the same equal priority weights. One client (10\%) is
-  selected per round on UCI HAR and two (20\%) on mHealth. Because each round
-  uploads a full encoder (3.6--3.9\,MB), the five UCI HAR budgets allow 3, 6,
-  8, 11 and 14 rounds, respectively; on mHealth it runs 10 rounds.
+  32, and uploads its top-1 modality model uncompressed, with the same equal
+  priority weights. One client (10\%) is selected per round on UCI HAR and
+  mHealth. Because each round uploads a full encoder (3.6--3.9\,MB on UCI HAR),
+  the five UCI HAR budgets allow 3, 6, 8, 11 and 14 rounds, respectively, and the
+  five mHealth budgets allow 2, 3, 5, 6 and 8 rounds. On PTB-XL,
+  two clients (20\%) are selected per round, each uploading one encoder
+  (0.91\,MB), so the four budgets allow 6, 11, 17 and 22 rounds.
+  \item \textit{ShapCCS:} each modality has an extractor--refiner encoder
+  with 64-dimensional features, and the concatenated features feed a linear
+  output layer. Every selected client trains for 1 local epoch of SGD with a
+  batch size of 32 and a learning rate of $0.05\cdot0.99^{t}$ in round $t$, and
+  the server averages the returned models weighted by the clients' numbers of
+  batches. Two clients (20\%) are selected per round. During the first 10
+  rounds, clients are selected in turn and scored by GPSV, computed from the
+  change in the output layer. After round 10, the data budget $B$ is split by
+  GPSV, clients whose share falls below $\tau = B/m$ are removed, and each
+  remaining client shrinks its data to its share with Moderate coreset
+  selection. Later rounds select $\lceil 0.2\times\text{remaining}\rceil$ of the
+  remaining clients, which is one client in all our runs. On UCI HAR and mHealth,
+  $B$ is 70\% of the training data and $m = 7$; on PTB-XL, $B$ is 30\% and
+  $m = 2$; both follow the released settings, scaled from 100 to 10 clients.
+  Each upload is one full model, about 0.25\,MB on UCI HAR, 0.33\,MB on mHealth
+  and 0.16\,MB on PTB-XL, so the budgets allow 32, 72, 112, 152 and 194 rounds
+  on UCI HAR, 8, 21, 36, 51 and 66 rounds on mHealth (with 2 scoring rounds
+  instead of 10 at 5\,MB), and 53, 115, 167 and 229 rounds on PTB-XL.
   \item \textit{Learning rate for both sketch-based methods:} the server's
   learning rate increases linearly from 0 to a peak of 0.05 and then decreases
   linearly back to 0 by the last round. % TODO: state where the peak is reached for the sweep (e.g., after X% of the T rounds)
-  Weight decay is $5\times10^{-4}$ for both.
+  On PTB-XL, the peak is 0.1 for both, reached after roughly a quarter to a
+  third of the rounds. Weight decay is $5\times10^{-4}$ for both.
   \item \textit{Seeds and reporting:} every configuration is run with five
-  seeds (42--46), and we report the mean final test accuracy. For a given seed,
+  seeds, and we report the mean final test accuracy. For a given seed,
   all approaches train on the same client datasets. In
   Figure~\ref{fig:uci_budgets}, we show one configuration of \method{} per
   budget, marked $^\dagger$ in Table~\ref{tab:uci_full}.
@@ -393,7 +461,7 @@ configuration can run (Table~\ref{tab:uci_full}).
 % so LaTeX can place it before the end of the paper (otherwise it can be lost on the last page).
 
 \begin{table}[!tp]
-\caption{Full results on UCI HAR (mean over seeds 42--46). Sketch: upload sketch rows $\times$ columns; $K$: clients per round out of 10; $M$: modalities uploaded per client out of 2; $T$: rounds; --: not applicable. Bold: best per budget; $^\dagger$: shown in Figure~\ref{fig:uci_budgets}.}
+\caption{Full results on UCI HAR (mean over five seeds). Sketch: upload sketch rows $\times$ columns; $K$: clients per round out of 10; $M$: modalities uploaded per client out of 2; $T$: rounds; --: not applicable. Bold: best per budget; $^\dagger$: shown in Figure~\ref{fig:uci_budgets}; for B5, $K$ is given as clients per round before $\to$ after ShapCCS pruning.}
 \label{tab:uci_full}
 \centering
 \footnotesize
@@ -408,6 +476,7 @@ B1 (IC) & $3\times1{,}000$ & 10 & -- & 85 & 47.57 \\
 B2 (MFedMC) & -- & 1 & 1/2 & 3 & 31.07 \\
 B3 (PFMH) & -- & 10 & -- & 1 & 36.60 \\
 B4 (FedMobile) & -- & 10 & -- & 3 & 48.30 \\ 
+B5 (ShapCCS) & -- & 2$\to$1 & -- & 32 & 51.27 \\
 \method{} & $3\times2{,}500$ & 2 & 1/2 & 170 & 70.92 \\
  & $3\times2{,}500$ & 4 & 1/2 & 85 & 63.37 \\
  & $3\times5{,}000$ & 1 & 1/2 & 170 & \textbf{72.51}\rlap{$^\dagger$} \\
@@ -421,6 +490,7 @@ B1 (IC) & $3\times2{,}000$ & 10 & -- & 85 & 50.17 \\
 B2 (MFedMC) & -- & 1 & 1/2 & 6 & 34.76 \\
 B3 (PFMH) & -- & 10 & -- & 2 & 47.98 \\
 B4 (FedMobile) & -- & 10 & -- & 6 & 66.24 \\ 
+B5 (ShapCCS) & -- & 2$\to$1 & -- & 72 & 62.45 \\
 \method{} & $3\times5{,}000$ & 1 & 1/2 & 340 & \textbf{77.80} \\
  & $3\times5{,}000$ & 2 & 1/2 & 170 & 74.87 \\
  & $3\times5{,}000$ & 4 & 1/2 & 85 & 69.71 \\
@@ -436,6 +506,7 @@ B1 (IC) & $3\times3{,}000$ & 10 & -- & 85 & 69.23 \\
 B2 (MFedMC) & -- & 1 & 1/2 & 8 & 34.74 \\
 B3 (PFMH) & -- & 10 & -- & 3 & 53.26 \\
 B4 (FedMobile) & -- & 10 & -- & 10 & 66.14 \\
+B5 (ShapCCS) & -- & 2$\to$1 & -- & 112 & 64.00 \\
 \method{} & $3\times5{,}000$ & 3 & 1/2 & 170 & 76.89 \\
  & $3\times5{,}000$ & 6 & 1/2 & 85 & 72.90 \\
  & $3\times15{,}000$ & 1 & 1/2 & 170 & \textbf{77.66}\rlap{$^\dagger$} \\
@@ -450,6 +521,7 @@ B1 (IC) & $3\times4{,}000$ & 10 & -- & 85 & 72.42 \\
 B2 (MFedMC) & -- & 1 & 1/2 & 11 & 34.88 \\
 B3 (PFMH) & -- & 10 & -- & 4 & 54.64 \\
 B4 (FedMobile) & -- & 10 & -- & 13 & 66.34 \\ 
+B5 (ShapCCS) & -- & 2$\to$1 & -- & 152 & 72.77 \\
 \method{} & $3\times10{,}000$ & 1 & 1/2 & 340 & \textbf{80.93} \\
  & $3\times10{,}000$ & 2 & 1/2 & 170 & 79.46\rlap{$^\dagger$} \\
  & $3\times10{,}000$ & 4 & 1/2 & 85 & 74.44 \\
@@ -465,6 +537,7 @@ B1 (IC) & $3\times5{,}000$ & 10 & -- & 85 & 72.82 \\
 B2 (MFedMC) & -- & 1 & 1/2 & 14 & 55.72 \\
 B3 (PFMH) & -- & 10 & -- & 5 & 54.96 \\
 B4 (FedMobile) & -- & 10 & -- & 16 & 67.88 \\  
+B5 (ShapCCS) & -- & 2$\to$1 & -- & 194 & 74.01 \\
 \method{} & $3\times20{,}000$ & 1 & 1/2 & 210 & \textbf{80.85}\rlap{$^\dagger$} \\
  & $3\times20{,}000$ & 2 & 1/2 & 105 & 77.99 \\
  & $3\times20{,}000$ & 4 & 1/2 & 53 & 73.61 \\
@@ -479,7 +552,7 @@ B4 (FedMobile) & -- & 10 & -- & 16 & 67.88 \\
 \end{table}
 
 \begin{table*}[p]
-\caption{Full results on mHealth (mean over seeds 42--46). Sketch: upload sketch rows $\times$ columns; $K$: clients per round out of 10; $M$: modalities uploaded per client out of 4; $T$: rounds; --: not applicable. Red bold: best per budget; grey row ($^\dagger$): configuration reported in the main comparison.}
+\caption{Full results on mHealth (mean over five seeds). Sketch: upload sketch rows $\times$ columns; $K$: clients per round out of 10; $M$: modalities uploaded per client out of 4; $T$: rounds; --: not applicable. Red bold: best per budget; grey row ($^\dagger$): configuration reported in the main comparison. For B5, $K$ is given as clients per round before $\to$ after ShapCCS pruning; at 5\,MB, B5 prunes after 2 pretraining rounds instead of 10 so that pruning happens within its 8 rounds.}
 \label{tab:mhealth_full}
 \centering
 \footnotesize
@@ -496,6 +569,7 @@ B1 (IC) & $3\times1{,}000$ & 10 & -- & 42 & 28.69 \\
 B2 (MFedMC) & -- & 1 & 1/4 & 2 & 18.08 \\
 B3 (PFMH) & -- & 10 & -- & 1 & 24.83 \\
 B4 (FedMobile) & -- & 10 & -- & 0 & -- \\
+B5 (ShapCCS) & -- & 2$\to$2 & -- & 8 & 66.73 \\
 \method{} & $3\times2{,}500$ & 1 & 1/4 & 168 & 87.53 \\
  & $3\times2{,}500$ & 1 & 2/4 & 168 & 84.88 \\
  & $3\times2{,}500$ & 1 & 3/4 & 168 & 87.58 \\
@@ -517,6 +591,7 @@ B1 (IC) & $3\times2{,}000$ & 10 & -- & 42 & 46.25 \\
 B2 (MFedMC) & -- & 1 & 1/4 & 3 & 18.04 \\
 B3 (PFMH) & -- & 10 & -- & 2 & 25.87 \\
 B4 (FedMobile) & -- & 10 & -- & 1 & 19.50 \\
+B5 (ShapCCS) & -- & 2$\to$1 & -- & 21 & 81.74 \\
 \method{} & $3\times5{,}000$ & 1 & 1/4 & 168 & 92.02 \\
  & $3\times5{,}000$ & 1 & 2/4 & 168 & \cellcolor{red!18}\textbf{97.79} \\
  & $3\times5{,}000$ & 1 & 3/4 & 168 & 96.76 \\
@@ -538,6 +613,7 @@ B1 (IC) & $3\times3{,}000$ & 10 & -- & 42 & 74.44 \\
 B2 (MFedMC) & -- & 1 & 1/4 & 5 & 18.06 \\
 B3 (PFMH) & -- & 10 & -- & 3 & 29.58 \\
 B4 (FedMobile) & -- & 10 & -- & 2 & 55.15 \\
+B5 (ShapCCS) & -- & 2$\to$1 & -- & 36 & 85.17 \\
 \method{} & $3\times10{,}000$ & 1 & 1/4 & 126 & 95.60 \\
  & $3\times10{,}000$ & 1 & 2/4 & 126 & \cellcolor{red!18}\textbf{96.90} \\
  & $3\times10{,}000$ & 1 & 3/4 & 126 & 96.37 \\
@@ -567,6 +643,7 @@ B1 (IC) & $3\times4{,}000$ & 10 & -- & 42 & 77.94 \\
 B2 (MFedMC) & -- & 1 & 1/4 & 6 & 19.98 \\
 B3 (PFMH) & -- & 10 & -- & 4 & 35.00 \\
 B4 (FedMobile) & -- & 10 & -- & 3 & 69.40 \\
+B5 (ShapCCS) & -- & 2$\to$1 & -- & 51 & 88.96 \\
 \method{} & $3\times10{,}000$ & 1 & 1/4 & 168 & 96.68 \\
  & $3\times10{,}000$ & 1 & 2/4 & 168 & \cellcolor{red!18}\textbf{97.69} \\
  & $3\times10{,}000$ & 1 & 3/4 & 168 & 97.46 \\
@@ -588,6 +665,7 @@ B1 (IC) & $3\times5{,}000$ & 10 & -- & 42 & 77.06 \\
 B2 (MFedMC) & -- & 1 & 1/4 & 8 & 19.35 \\
 B3 (PFMH) & -- & 10 & -- & 5 & 38.94 \\
 B4 (FedMobile) & -- & 10 & -- & 4 & 83.71 \\
+B5 (ShapCCS) & -- & 2$\to$1 & -- & 66 & 93.44 \\
 \method{} & $3\times20{,}000$ & 1 & 1/4 & 105 & 95.97 \\
  & $3\times20{,}000$ & 1 & 2/4 & 105 & \cellcolor{red!18}\textbf{97.96} \\
  & $3\times20{,}000$ & 1 & 3/4 & 105 & 96.92 \\
@@ -613,19 +691,19 @@ B4 (FedMobile) & -- & 10 & -- & 4 & 83.71 \\
   \centering
   \begin{subfigure}[b]{0.32\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{figures/fig_uci_10mb.png}
+    \includegraphics[width=\linewidth]{figures/fig_uci_10mb_shapccs.png}
     \caption{10\,MB upload budget}
     \label{fig:uci_10mb}
   \end{subfigure}\hfill
   \begin{subfigure}[b]{0.32\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{figures/fig_uci_20mb.png}
+    \includegraphics[width=\linewidth]{figures/fig_uci_20mb_shapccs.png}
     \caption{20\,MB upload budget}
     \label{fig:uci_20mb}
   \end{subfigure}\hfill
   \begin{subfigure}[b]{0.32\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{figures/fig_uci_30mb.png}
+    \includegraphics[width=\linewidth]{figures/fig_uci_30mb_shapccs.png}
     \caption{30\,MB upload budget}
     \label{fig:uci_30mb}
   \end{subfigure}
@@ -633,18 +711,18 @@ B4 (FedMobile) & -- & 10 & -- & 4 & 83.71 \\
   \vspace{4pt}
   \begin{subfigure}[b]{0.32\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{figures/fig_uci_40mb.png}
+    \includegraphics[width=\linewidth]{figures/fig_uci_40mb_shapccs.png}
     \caption{40\,MB upload budget}
     \label{fig:uci_40mb}
   \end{subfigure}\hspace{0.02\textwidth}
   \begin{subfigure}[b]{0.32\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{figures/fig_uci_50mb.png}
+    \includegraphics[width=\linewidth]{figures/fig_uci_50mb_shapccs.png}
     \caption{50\,MB upload budget}
     \label{fig:uci_50mb}
   \end{subfigure}
-  \caption{Test accuracy of three approaches versus cumulative upload on UCI HAR under five upload budgets.}
-  \Description{Five line plots of average test accuracy against cumulative upload traffic on UCI HAR, one per upload budget (10, 20, 30, 40 and 50 MB). Each compares Independent Compression, MFedMC and \method; \method{} reaches the highest final accuracy in every budget.}
+  \caption{Test accuracy of the six approaches versus cumulative upload on UCI HAR under five upload budgets (mean of five seeds).}
+  \Description{Five line plots of average test accuracy against cumulative upload traffic on UCI HAR, one per upload budget (10, 20, 30, 40 and 50 MB). Each compares B1 (Independent Compression), B2 (MFedMC), B3 (PFMH), B4 (FedMobile), B5 (ShapCCS, black curve) and \method; \method{} reaches the highest final accuracy in every budget.}
   \label{fig:uci_budgets}
 \end{figure*}
 
@@ -653,19 +731,19 @@ B4 (FedMobile) & -- & 10 & -- & 4 & 83.71 \\
   \centering
   \begin{subfigure}[b]{0.32\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{figures/mhealth_5MB_comparison_fedmobile.png}
+    \includegraphics[width=\linewidth]{figures/mhealth_5MB_comparison_fedmobile_shapccs.png}
     \caption{5\,MB upload budget}
     \label{fig:mhealth_5mb}
   \end{subfigure}\hfill
   \begin{subfigure}[b]{0.32\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{figures/mhealth_10MB_comparison_fedmobile.png}
+    \includegraphics[width=\linewidth]{figures/mhealth_10MB_comparison_fedmobile_shapccs.png}
     \caption{10\,MB upload budget}
     \label{fig:mhealth_10mb}
   \end{subfigure}\hfill
   \begin{subfigure}[b]{0.32\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{figures/mhealth_15MB_comparison_fedmobile.png}
+    \includegraphics[width=\linewidth]{figures/mhealth_15MB_comparison_fedmobile_shapccs.png}
     \caption{15\,MB upload budget}
     \label{fig:mhealth_15mb}
   \end{subfigure}
@@ -673,18 +751,18 @@ B4 (FedMobile) & -- & 10 & -- & 4 & 83.71 \\
   \vspace{4pt}
   \begin{subfigure}[b]{0.32\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{figures/mhealth_20MB_comparison_fedmobile.png}
+    \includegraphics[width=\linewidth]{figures/mhealth_20MB_comparison_fedmobile_shapccs.png}
     \caption{20\,MB upload budget}
     \label{fig:mhealth_20mb}
   \end{subfigure}\hspace{0.02\textwidth}
   \begin{subfigure}[b]{0.32\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{figures/mhealth_25MB_comparison_fedmobile.png}
+    \includegraphics[width=\linewidth]{figures/mhealth_25MB_comparison_fedmobile_shapccs.png}
     \caption{25\,MB upload budget}
     \label{fig:mhealth_25mb}
   \end{subfigure}
-    \caption{Test accuracy versus cumulative upload on mHealth under five upload budgets.}
-  \Description{Five line plots of average test accuracy against cumulative upload traffic on mHealth, one per upload budget (5, 10, 15, 20 and 25 MB), comparing the baselines with \method{}.}
+    \caption{Test accuracy of the six approaches versus cumulative upload on mHealth under five upload budgets (mean of five seeds).}
+  \Description{Five line plots of average test accuracy against cumulative upload traffic on mHealth, one per upload budget (5, 10, 15, 20 and 25 MB), comparing B1 (Independent Compression), B2 (MFedMC), B3 (PFMH), B4 (FedMobile) and B5 (ShapCCS, black curve) with \method{}; \method{} reaches the highest final accuracy in every budget, and ShapCCS is the strongest baseline.}
   \label{fig:mhealth_budgets}
 \end{figure*}
 
@@ -692,8 +770,8 @@ B4 (FedMobile) & -- & 10 & -- & 4 & 83.71 \\
 \paragraph{Accuracy under different communication budgets.}
 Figure~\ref{fig:uci_budgets} shows how test accuracy evolves with cumulative
 upload under each budget, and Figure~\ref{fig:uci_budget_summary} summarizes
-the final accuracy of the three approaches as the budget grows from 10\,MB to
-50\,MB.
+the final accuracy of all six approaches as the budget grows from 10\,MB to
+50\,MB. We discuss below how each approach spends the budget.
 
 \begin{itemize}
   \item \textbf{B1 (Independent Compression)} has all 10 clients upload a
@@ -711,6 +789,23 @@ the final accuracy of the three approaches as the budget grows from 10\,MB to
   encoders, its last round can slightly exceed the budget (e.g., 11.08\,MB at
   the 10\,MB budget). B2 stays between 31\% and 35\% until 50\,MB, where it
   reaches 54.59\%.
+  \item \textbf{B3 (PFMH)} has all 10 clients upload their full model,
+  including the classifier, uncompressed in every round (about 1.0\,MB per
+  client), so each round costs about 10\,MB and the budgets allow only 1 to 5
+  rounds. Its accuracy rises from 36.60\% to 54.96\%, but it barely improves
+  beyond 30\,MB.
+  \item \textbf{B4 (FedMobile)} also has all 10 clients upload their full model
+  and generator in every round (about 0.32\,MB per client), giving 3, 6, 10, 13
+  and 16 rounds. Since each client trains for 5 local epochs, its accuracy rises
+  quickly from 48.30\% at 10\,MB to 66.24\% at 20\,MB, where it is the
+  strongest baseline, but then stays at 66--68\% up to 50\,MB.
+  \item \textbf{B5 (ShapCCS)} does not compress its updates: each selected
+  client uploads its full model (about 0.25\,MB). It selects 2 clients per
+  round during its 10 scoring rounds and 1 client afterwards, so each budget
+  buys 32, 72, 112, 152 and 194 rounds, respectively. After the scoring rounds,
+  it trains only on the clients it keeps, with their reduced data. Its accuracy
+  rises steadily from 51.27\% to 74.01\%, and it is the strongest baseline at
+  10, 40 and 50\,MB.
   \item \textbf{\method{}} selects the highest-loss client (two clients at
   40\,MB) and, for that client, keeps only the modality with the highest
   priority based on SHAP value, encoder size and recency. The gradient entries
@@ -725,50 +820,55 @@ the final accuracy of the three approaches as the budget grows from 10\,MB to
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\columnwidth]{figures/fig_uci_budget_bars.png}
-  \caption{Test accuracy of the five approaches at each cumulative upload budget on UCI HAR (mean of five seeds).}
-  \Description{Grouped bar chart of test accuracy at upload budgets of 10, 20, 30, 40 and 50 MB for B1 (Independent Compression), B2 (MFedMC), B3 (PFMH), B4 (FL-FD) and \method{}. \method{} has the tallest bar at every budget (72.6\% to 80.9\%). FL-FD is the strongest baseline, rising from 56.9\% to 78.3\%; B1 rises from 47.6\% to 72.8\%; PFMH rises from 36.6\% to 55.0\%; and MFedMC stays near 31--35\% until 54.6\% at 50 MB.}
+  \includegraphics[width=\columnwidth]{figures/fig_uci_budget_bars_shapccs.png}
+  \caption{Test accuracy of the six approaches at each cumulative upload budget on UCI HAR (mean of five seeds).}
+  \Description{Grouped bar chart of test accuracy at upload budgets of 10, 20, 30, 40 and 50 MB for B1 (Independent Compression), B2 (MFedMC), B3 (PFMH), B4 (FedMobile), B5 (ShapCCS) and \method{}. \method{} has the tallest bar at every budget (72.6\% to 80.9\%). ShapCCS rises from 51.3\% to 74.0\% and is the strongest baseline at 10, 40 and 50 MB; B1 rises from 47.6\% to 72.8\%; FedMobile rises from 48.3\% to 67.9\%; PFMH rises from 36.6\% to 55.0\%; and MFedMC stays near 31--35\% until 54.6\% at 50 MB.}
   \label{fig:uci_budget_bars}
 \end{figure}
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\columnwidth]{figures/fig_mhealth_budget_bars.pdf}
-  \caption{Test accuracy of the five approaches at each cumulative upload budget on mHealth (mean of five seeds).}
-  \Description{Grouped bar chart of test accuracy at upload budgets of 5, 10, 15, 20 and 25 MB for B1 (Independent Compression), B2 (MFedMC), B3 (PFMH), B4 (FL-FD) and \method{}. \method{} has the tallest bar at every budget from 10 MB (93.6\% to 97.2\%), while at 5 MB FL-FD is highest (78.7\% vs.\ 75.3\%). FL-FD is the strongest baseline, rising from 78.7\% to 94.0\%; B1 rises from 28.7\% to 77.9\%; PFMH rises from 24.8\% to 38.9\%; and MFedMC stays near 18--20\% at every budget.}
+  \includegraphics[width=\columnwidth]{figures/fig_mhealth_budget_bars_shapccs.pdf}
+  \caption{Test accuracy of the six approaches at each cumulative upload budget on mHealth (mean of five seeds). FedMobile cannot complete a round within 5\,MB.}
+  \Description{Grouped bar chart of test accuracy at upload budgets of 5, 10, 15, 20 and 25 MB for B1 (Independent Compression), B2 (MFedMC), B3 (PFMH), B4 (FedMobile), B5 (ShapCCS) and \method{}. \method{} has the tallest bar at every budget (75.3\% to 97.2\%). ShapCCS is the strongest baseline, rising from 66.7\% to 93.4\%; B1 rises from 28.7\% to 77.9\%; FedMobile has no round at 5 MB and rises from 19.5\% to 83.7\%; PFMH rises from 24.8\% to 38.9\%; and MFedMC stays near 18--20\% at every budget.}
   \label{fig:mhealth_budget_bars}
 \end{figure}
 
 
-As Figure~\ref{fig:uci_budget_bars} shows, \method{} thus outperforms B1 by
-7.1--26.2 percentage points and B2 by 26.3--44.6 points at every budget.
+As Figure~\ref{fig:uci_budget_bars} and Table~\ref{tab:uci_summary} show,
+\method{} thus outperforms every baseline at every budget, by 6.7--21.4
+percentage points over the strongest baseline of each budget (B5 at 10, 40 and
+50\,MB, B4 at 20\,MB and B1 at 30\,MB). It outperforms B5 by 6.7--21.4
+points, B4 by 10.1--24.3 points, B1 by 7.1--26.2 points, B3 by 24.4--36.0
+points and B2 by 26.3--44.6 points.
 The advantage over B1 is largest under tight
 budgets (25.1 and 26.2 points at 10 and 20\,MB, vs.\ 7.1--8.4 points above
 30\,MB). With only 10\,MB, \method{} already matches B1's accuracy at 50\,MB
-(72.64\% vs.\ 72.83\%), i.e., it reaches comparable accuracy with one fifth of
-the upload. This shows that sending a moderately compressed update from one
-well-chosen client and modality makes better use of the budget than sending
-heavily compressed updates from every client or uncompressed updates from a
-single client.
+(72.64\% vs.\ 72.83\%) and comes within 1.4 points of B5's (74.01\%), i.e., it
+reaches comparable accuracy with one fifth of the upload. This shows that
+sending a moderately compressed update from one well-chosen client and modality
+makes better use of the budget than sending heavily compressed updates from
+every client (B1) or uncompressed updates from a few selected clients (B2 and
+B5).
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\columnwidth]{figures/fig_uci_budget_summary.png}
-  \caption{Final test accuracy of the three approaches under each upload budget on UCI HAR (mean of five seeds).}
-  \Description{Line plot of final test accuracy against upload budget (10 to 50 MB) for B1 (Independent Compression), B2 (MFedMC) and \method{}. \method{} is highest at every budget, rising from 72.6\% to 80.9\%; B1 rises from 47.6\% to 72.8\%, with most of the gain between 20 and 30 MB; B2 stays near 31--35\% until it reaches 54.6\% at 50 MB.}
+  \includegraphics[width=\columnwidth]{figures/fig_uci_budget_summary_shapccs.png}
+  \caption{Final test accuracy of the six approaches under each upload budget on UCI HAR (mean of five seeds).}
+  \Description{Line plot of final test accuracy against upload budget (10 to 50 MB) for B1 (Independent Compression), B2 (MFedMC), B3 (PFMH), B4 (FedMobile), B5 (ShapCCS) and \method{}. \method{} is highest at every budget, rising from 72.6\% to 80.9\%; B5 rises from 51.3\% to 74.0\%; B1 rises from 47.6\% to 72.8\%, with most of the gain between 20 and 30 MB; B4 rises from 48.3\% to 67.9\%; B3 rises from 36.6\% to 55.0\%; B2 stays near 31--35\% until it reaches 54.6\% at 50 MB.}
   \label{fig:uci_budget_summary}
 \end{figure}
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\columnwidth]{figures/fig_mhealth_budget_summary.pdf}
-  \caption{Final test accuracy of the five approaches under each upload budget on mHealth (mean of five seeds).}
-  \Description{Line plot of final test accuracy against upload budget (5 to 25 MB) on mHealth for B1 (Independent Compression), B2 (MFedMC), B3 (PFMH), B4 (FL-FD) and \method{}. \method{} is highest from 10 MB onward, rising from 93.6\% to 97.2\%, but is below FL-FD at 5 MB (75.3\% vs.\ 78.7\%). FL-FD rises from 78.7\% to 94.0\%; B1 rises from 28.7\% to 77.9\%, with most of the gain between 10 and 15 MB; PFMH rises slowly from 24.8\% to 38.9\%; and MFedMC stays near 18--20\% at every budget.}
+  \includegraphics[width=\columnwidth]{figures/fig_mhealth_budget_summary_shapccs.pdf}
+  \caption{Final test accuracy of the six approaches under each upload budget on mHealth (mean of five seeds). FedMobile cannot complete a round within 5\,MB.}
+  \Description{Line plot of final test accuracy against upload budget (5 to 25 MB) on mHealth for B1 (Independent Compression), B2 (MFedMC), B3 (PFMH), B4 (FedMobile), B5 (ShapCCS) and \method{}. \method{} is highest at every budget, rising from 75.3\% to 97.2\%. ShapCCS rises from 66.7\% to 93.4\%; B1 rises from 28.7\% to 77.9\%, with most of the gain between 10 and 15 MB; FedMobile rises from 19.5\% at 10 MB to 83.7\% at 25 MB; PFMH rises slowly from 24.8\% to 38.9\%; and MFedMC stays near 18--20\% at every budget.}
   \label{fig:mhealth_budget_summary}
 \end{figure}
 
 \paragraph{Sensitivity to the budget.}
-Figure~\ref{fig:uci_budget_summary} highlights how differently the three
+Figure~\ref{fig:uci_budget_summary} highlights how differently the
 approaches depend on the budget. \method{} is the least sensitive: its accuracy
 rises by only 8.2 points across a $5\times$ increase in budget (from 72.64\% to
 80.88\%) and improves at every step, so most of its accuracy is already
@@ -778,15 +878,23 @@ sketch widens from $3\times2{,}000$ to $3\times3{,}000$. This suggests that,
 because every client compresses its full gradient, B1's narrower sketches are
 too small to recover enough useful coordinates. B2 remains nearly flat at
 31--35\% up to 40\,MB and improves only at 50\,MB, because each additional
-round costs an entire uncompressed encoder. As a result, the gap between
-\method{} and B1 shrinks from about 25 points at 10--20\,MB to 7--8 points at
-30--50\,MB, while \method{} stays at least 26 points above B2 at every budget.
+round costs an entire uncompressed encoder. B3 and B4 gain 18.4 and 19.6
+points, respectively, but almost all of it between 10 and 20\,MB (+11.4 and
++17.9 points), and both are nearly flat beyond 30\,MB, since each extra round
+of full-model uploads from all 10 clients adds little. B5 gains 22.7 points (from 51.27\%
+to 74.01\%), more evenly than B1, since each extra megabyte buys about four more
+uncompressed single-client rounds; its largest steps are between 10 and 20\,MB
+(+11.2 points) and between 30 and 40\,MB (+8.8 points). As a result, the gap
+between \method{} and B1 shrinks from about 25 points at 10--20\,MB to 7--8
+points at 30--50\,MB, and the gap to B5 shrinks from 21.4 points at 10\,MB to
+13.6--13.9 points at 20--30\,MB and 6.7--6.9 points at 40--50\,MB, while
+\method{} stays at least 26 points above B2 at every budget.
 \method{} therefore delivers the largest benefit exactly where communication is
 most constrained.
 
 
 \begin{table}[t]
-  \caption{Test accuracy (\%) of the five approaches under each cumulative upload budget on UCI HAR. Bold: best; underline: best baseline.}
+  \caption{Test accuracy (\%) of the six approaches under each cumulative upload budget on UCI HAR. Bold: best; underline: best baseline.}
   \label{tab:uci_summary}
   \centering
   \footnotesize
@@ -797,19 +905,20 @@ most constrained.
   \cmidrule(l){2-6}
   Method & 10 & 20 & 30 & 40 & 50 \\
   \midrule
-  B1 (IC)        & 47.55 & 50.13 & \underline{69.23} & \underline{72.39} & \underline{72.83} \\
+  B1 (IC)        & 47.55 & 50.13 & \underline{69.23} & 72.39 & 72.83 \\
   B2 (MFedMC)    & 31.09 & 34.76 & 34.74 & 34.87 & 54.59 \\
   B3 (PFMH)      & 36.60 & 47.98 & 53.26 & 54.64 & 54.96 \\
-  B4 (FedMobile) & \underline{48.30} & \underline{66.24} & 66.14 & 66.34 & 67.88 \\
+  B4 (FedMobile) & 48.30 & \underline{66.24} & 66.14 & 66.34 & 67.88 \\
+  B5 (ShapCCS)   & \underline{51.27} & 62.45 & 64.00 & \underline{72.77} & \underline{74.01} \\
   \method{}      & \textbf{72.64} & \textbf{76.34} & \textbf{77.63} & \textbf{79.45} & \textbf{80.88} \\
   \midrule
-  Gain over best baseline & +24.34 & +10.10 & +8.40 & +7.06 & +8.05 \\
+  Gain over best baseline & +21.37 & +10.10 & +8.40 & +6.68 & +6.87 \\
   \bottomrule
   \end{tabular}
   \end{table}
 
   \begin{table}[t]
-    \caption{Test accuracy (\%) of the five approaches under each cumulative upload budget on mHealth. Bold: best; underline: best baseline. FedMobile uploads 6.21\,MB per round and cannot complete a round within 5\,MB.}
+    \caption{Test accuracy (\%) of the six approaches under each cumulative upload budget on mHealth. Bold: best; underline: best baseline. FedMobile uploads 6.21\,MB per round and cannot complete a round within 5\,MB.}
     \label{tab:mhealth_summary}
     \centering
     \footnotesize
@@ -820,16 +929,247 @@ most constrained.
     \cmidrule(l){2-6}
     Method & 5 & 10 & 15 & 20 & 25 \\
     \midrule
-    B1 (IC)        & \underline{28.69} & \underline{46.25} & \underline{74.44} & \underline{77.94} & 77.06 \\
+    B1 (IC)        & 28.69 & 46.25 & 74.44 & 77.94 & 77.06 \\
     B2 (MFedMC)    & 18.08 & 18.04 & 18.06 & 19.98 & 19.35 \\
     B3 (PFMH)      & 24.83 & 25.87 & 29.58 & 35.00 & 38.94 \\
-    B4 (FedMobile) & -- & 19.50 & 55.15 & 69.40 & \underline{83.71} \\
+    B4 (FedMobile) & -- & 19.50 & 55.15 & 69.40 & 83.71 \\
+    B5 (ShapCCS)   & \underline{66.73} & \underline{81.74} & \underline{85.17} & \underline{88.96} & \underline{93.44} \\
     \method{}      & \textbf{75.25} & \textbf{93.63} & \textbf{95.87} & \textbf{96.85} & \textbf{97.15} \\
     \midrule
-    Gain over best baseline & +46.56 & +47.38 & +21.43 & +18.91 & +13.44 \\
+    Gain over best baseline & +8.52 & +11.89 & +10.70 & +7.89 & +3.71 \\
     \bottomrule
     \end{tabular}
     \end{table}
+
+\paragraph{Results on mHealth.}
+Table~\ref{tab:mhealth_summary} and
+Figures~\ref{fig:mhealth_budgets}, \ref{fig:mhealth_budget_bars} and
+\ref{fig:mhealth_budget_summary} compare the approaches on mHealth under
+budgets of 5 to 25\,MB, Table~\ref{tab:mhealth_full} lists every
+configuration, and Figure~\ref{fig:mhealth_configs} plots their curves. \method{} is the most accurate approach at every budget, reaching
+75.25\%, 93.63\%, 95.87\%, 96.85\% and 97.15\% at 5, 10, 15, 20 and 25\,MB.
+ShapCCS is the strongest baseline at every budget, rising from 66.73\% to
+93.44\%: its model is small (about 0.33\,MB per upload), so even without
+compression it runs 8 to 66 rounds. \method{} stays 3.7 to 11.9 points above it,
+and with 10\,MB it already exceeds ShapCCS's accuracy at 25\,MB (93.63\% vs.\
+93.44\%), i.e., with 40\% of the upload. B1 rises from 28.69\% to 77.94\% at
+20\,MB, with most of its gain between 10 and 15\,MB. FedMobile uploads 6.21\,MB
+per round, so it cannot complete a round within 5\,MB and reaches 19.50\% to
+83.71\% at 10 to 25\,MB. PFMH improves slowly (24.83\% to 38.94\%), and MFedMC
+stays near 18--20\% at every budget.
+
+\paragraph{Results on PTB-XL}
+Table~\ref{tab:ptbxl_summary} and Figures~\ref{fig:ptbxl_budgets}--\ref{fig:ptbxl_budget_summary}
+compare the approaches on PTB-XL under budgets of 10 to 40\,MB, and
+Table~\ref{tab:ptbxl_full} lists every configuration. \method{} is again the
+most accurate approach at every budget: with the configurations marked
+$^\dagger$, which use the same sketch width as B1, it reaches 61.63\%, 62.43\%,
+63.69\% and 64.53\% at 10, 20, 30 and 40\,MB, i.e., 2.2 to 3.1 points above the
+strongest baseline, which is B1 at 10 and 20\,MB and ShapCCS at 30 and
+40\,MB, and its best configurations reach up to 64.99\%. The
+margins are smaller than on UCI HAR and mHealth because PTB-XL is harder for
+every approach: all of them stay close to the 56.3\% that a model obtains by
+always predicting the majority class (NORM), and B1 gains only 1.5 points from
+10 to 40\,MB. PFMH remains at this majority-class accuracy (56.3--57.0\%), i.e.,
+it effectively predicts NORM for every record, and FedMobile, which trains with
+the first modality missing in 80\% of its batches, reaches 57.9--59.0\%.
+ShapCCS rises from 58.39\% to 61.43\% and overtakes B1 at 30\,MB. After its
+scoring rounds it keeps only 1 to 4 of the 10 clients and trains on one client
+per round, so its curves fluctuate strongly from round to round and its final
+accuracy varies across seeds (standard deviation up to 3.4 points). MFedMC
+stays at 15.0--29.0\%, below the majority class, because each round uploads two
+uncompressed encoders and the budgets allow only 6 to 22 rounds. The best way to
+spend the budget also differs from UCI HAR (Figure~\ref{fig:ptbxl_configs}). Selecting 5 of the 10 clients per
+round with the narrowest sketch is the most accurate configuration at every
+budget, while selecting 3 clients and running the most rounds is among the least
+accurate (e.g., 56.72\% vs.\ 63.80\% at 10\,MB). With 3 clients per round, the
+accuracy also varies much more across seeds (standard deviation up to 2.8 points,
+vs.\ at most 0.7 points with 5 or 8 clients), which is consistent with selecting
+clients at random on this strongly imbalanced partition.
+
+\begin{table}[!tp]
+\caption{Full results on PTB-XL (mean over five seeds). Sketch: upload sketch rows $\times$ columns; $K$: clients per round out of 10; $M$: modalities uploaded per client out of 2; $T$: rounds; --: not applicable. Bold: best per budget; $^\dagger$: configuration marked for the main comparison; $^\ddagger$: mean over four seeds (one run failed); for B5, $K$ is given as clients per round before $\to$ after ShapCCS pruning. Always predicting NORM gives 56.34\%.}
+\label{tab:ptbxl_full}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4.5pt}
+\renewcommand{\arraystretch}{0.92}
+\begin{tabular}[t]{@{}l c c c r c@{}}
+\toprule
+Method & Sketch & $K$ & $M$ & $T$ & Acc.\ (\%) \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{Upload budget: 10\,MB}} \\
+B1 (IC) & $3\times2{,}000$ & 10 & -- & 42 & 59.47 \\
+B2 (MFedMC) & -- & 2 & 1/2 & 6 & 15.01 \\
+B3 (PFMH) & -- & 10 & -- & 3 & 56.33 \\
+B4 (FedMobile) & -- & 10 & -- & 5 & 57.86 \\
+B5 (ShapCCS) & -- & 2$\to$1 & -- & 53 & 58.39 \\
+\method{} & $3\times1{,}000$ & 3 & 1/2 & 280 & 56.72\rlap{$^\ddagger$} \\
+ & $3\times1{,}000$ & 5 & 1/2 & 168 & \textbf{63.80} \\
+ & $3\times1{,}000$ & 8 & 1/2 & 108 & 62.26 \\
+ & $3\times2{,}000$ & 3 & 1/2 & 140 & 59.93 \\
+ & $3\times2{,}000$ & 5 & 1/2 & 84 & 61.63\rlap{$^\dagger$} \\
+ & $3\times2{,}000$ & 8 & 1/2 & 54 & 60.81 \\
+ & $3\times4{,}000$ & 3 & 1/2 & 70 & 61.31 \\
+ & $3\times4{,}000$ & 5 & 1/2 & 42 & 60.30 \\
+ & $3\times4{,}000$ & 8 & 1/2 & 27 & 59.77 \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{Upload budget: 20\,MB}} \\
+B1 (IC) & $3\times3{,}000$ & 10 & -- & 56 & 60.24 \\
+B2 (MFedMC) & -- & 2 & 1/2 & 11 & 19.92 \\
+B3 (PFMH) & -- & 10 & -- & 6 & 56.33 \\
+B4 (FedMobile) & -- & 10 & -- & 9 & 57.97 \\
+B5 (ShapCCS) & -- & 2$\to$1 & -- & 115 & 59.15 \\
+\method{} & $3\times1{,}500$ & 3 & 1/2 & 372 & 59.75 \\
+ & $3\times1{,}500$ & 5 & 1/2 & 224 & \textbf{64.26} \\
+ & $3\times1{,}500$ & 8 & 1/2 & 140 & 63.33 \\
+ & $3\times3{,}000$ & 3 & 1/2 & 186 & 63.62 \\
+ & $3\times3{,}000$ & 5 & 1/2 & 112 & 62.43\rlap{$^\dagger$} \\
+ & $3\times3{,}000$ & 8 & 1/2 & 70 & 61.59 \\
+ & $3\times6{,}000$ & 3 & 1/2 & 93 & 61.98 \\
+ & $3\times6{,}000$ & 5 & 1/2 & 56 & 61.83 \\
+ & $3\times6{,}000$ & 8 & 1/2 & 35 & 60.57 \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{Upload budget: 30\,MB}} \\
+B1 (IC) & $3\times4{,}000$ & 10 & -- & 63 & 60.62 \\
+B2 (MFedMC) & -- & 2 & 1/2 & 17 & 28.95 \\
+B3 (PFMH) & -- & 10 & -- & 8 & 56.34 \\
+B4 (FedMobile) & -- & 10 & -- & 13 & 58.83 \\
+B5 (ShapCCS) & -- & 2$\to$1 & -- & 167 & 60.96 \\
+\method{} & $3\times2{,}000$ & 3 & 1/2 & 420 & 61.19 \\
+ & $3\times2{,}000$ & 5 & 1/2 & 250 & \textbf{64.99} \\
+ & $3\times2{,}000$ & 8 & 1/2 & 160 & 63.45 \\
+ & $3\times4{,}000$ & 3 & 1/2 & 210 & 64.66 \\
+ & $3\times4{,}000$ & 5 & 1/2 & 125 & 63.69\rlap{$^\dagger$} \\
+ & $3\times4{,}000$ & 8 & 1/2 & 80 & 62.15 \\
+ & $3\times8{,}000$ & 3 & 1/2 & 105 & 62.21 \\
+ & $3\times8{,}000$ & 5 & 1/2 & 63 & 62.30 \\
+ & $3\times8{,}000$ & 8 & 1/2 & 40 & 61.01 \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{Upload budget: 40\,MB}} \\
+B1 (IC) & $3\times5{,}000$ & 10 & -- & 68 & 60.93 \\
+B2 (MFedMC) & -- & 2 & 1/2 & 22 & 25.68 \\
+B3 (PFMH) & -- & 10 & -- & 11 & 57.00 \\
+B4 (FedMobile) & -- & 10 & -- & 17 & 59.02 \\
+B5 (ShapCCS) & -- & 2$\to$1 & -- & 229 & 61.43 \\
+\method{} & $3\times2{,}500$ & 3 & 1/2 & 450 & 62.76 \\
+ & $3\times2{,}500$ & 5 & 1/2 & 272 & \textbf{64.87} \\
+ & $3\times2{,}500$ & 8 & 1/2 & 170 & 63.75 \\
+ & $3\times5{,}000$ & 3 & 1/2 & 225 & 64.53\rlap{$^\dagger$} \\
+ & $3\times5{,}000$ & 5 & 1/2 & 136 & 63.84 \\
+ & $3\times5{,}000$ & 8 & 1/2 & 85 & 62.60 \\
+ & $3\times10{,}000$ & 3 & 1/2 & 112 & 62.03 \\
+ & $3\times10{,}000$ & 5 & 1/2 & 68 & 62.33 \\
+ & $3\times10{,}000$ & 8 & 1/2 & 42 & 61.28 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+  \caption{Test accuracy (\%) of the six approaches under each cumulative upload budget on PTB-XL (mean of five seeds). Bold: best; underline: best baseline. Always predicting the majority class (NORM) gives 56.34\%.}
+  \label{tab:ptbxl_summary}
+  \centering
+  \footnotesize
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabular}{@{}l cccc@{}}
+  \toprule
+   & \multicolumn{4}{c}{Cumulative upload budget (MB)} \\
+  \cmidrule(l){2-5}
+  Method & 10 & 20 & 30 & 40 \\
+  \midrule
+  B1 (IC)        & \underline{59.47} & \underline{60.24} & 60.62 & 60.93 \\
+  B2 (MFedMC)    & 15.01 & 19.92 & 28.95 & 25.68 \\
+  B3 (PFMH)      & 56.33 & 56.33 & 56.34 & 57.00 \\
+  B4 (FedMobile) & 57.86 & 57.97 & 58.83 & 59.02 \\
+  B5 (ShapCCS)   & 58.39 & 59.15 & \underline{60.96} & \underline{61.43} \\
+  \method{}$^\dagger$ & \textbf{61.63} & \textbf{62.43} & \textbf{63.69} & \textbf{64.53} \\
+  \midrule
+  Gain over best baseline & +2.16 & +2.19 & +2.73 & +3.10 \\
+  \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure*}[t]
+  \centering
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_ptbxl_10mb_shapccs.png}
+    \caption{10\,MB upload budget}
+    \label{fig:ptbxl_10mb}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_ptbxl_20mb_shapccs.png}
+    \caption{20\,MB upload budget}
+    \label{fig:ptbxl_20mb}
+  \end{subfigure}
+
+  \vspace{4pt}
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_ptbxl_30mb_shapccs.png}
+    \caption{30\,MB upload budget}
+    \label{fig:ptbxl_30mb}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_ptbxl_40mb_shapccs.png}
+    \caption{40\,MB upload budget}
+    \label{fig:ptbxl_40mb}
+  \end{subfigure}
+  \caption{Test accuracy of the six approaches versus cumulative upload on PTB-XL under four upload budgets (mean of five seeds). \method{} uses the configuration marked $^\dagger$ in Table~\ref{tab:ptbxl_full}; the dashed line is the accuracy of always predicting the majority class (NORM).}
+  \Description{Four line plots of average test accuracy against cumulative upload on PTB-XL, one per upload budget (10, 20, 30 and 40 MB), for Independent Compression, MFedMC, PFMH, FedMobile, ShapCCS (black curve) and \method{}. \method{} ends highest in every budget (61.6\% to 64.5\%); Independent Compression (59.5\% to 60.9\%) and ShapCCS (58.4\% to 61.4\%, with large round-to-round fluctuations) follow, FedMobile and PFMH stay near the 56.3\% majority-class line, and MFedMC is far below it (15\% to 29\%).}
+  \label{fig:ptbxl_budgets}
+\end{figure*}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig_ptbxl_budget_bars_shapccs.pdf}
+  \caption{Test accuracy of the six approaches at each cumulative upload budget on PTB-XL (mean of five seeds). The dashed line is the majority-class accuracy.}
+  \Description{Grouped bar chart of test accuracy at upload budgets of 10, 20, 30 and 40 MB on PTB-XL for \method{}, Independent Compression, MFedMC, PFMH, FedMobile and ShapCCS. \method{} has the tallest bar at every budget (61.6\% to 64.5\%). Independent Compression (59.5\% to 60.9\%) is second at 10 and 20 MB and ShapCCS (58.4\% to 61.4\%) at 30 and 40 MB, followed by FedMobile (57.9\% to 59.0\%) and PFMH (56.3\% to 57.0\%, at the majority-class line); MFedMC stays between 15\% and 29\%.}
+  \label{fig:ptbxl_budget_bars}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/fig_ptbxl_budget_summary_zoom_shapccs.pdf}
+  \caption{Final test accuracy of the six approaches under each upload budget on PTB-XL (mean of five seeds). The y-axis starts at 50\%; MFedMC's accuracy is below it and is shown as labelled markers on the bottom edge. The dashed line is the majority-class accuracy.}
+  \Description{Line plot of final test accuracy against upload budget (10 to 40 MB) on PTB-XL, with the y-axis from 50\% to 70\%. \method{} is highest at every budget, rising from 61.6\% to 64.5\%; Independent Compression rises from 59.5\% to 60.9\%; ShapCCS rises from 58.4\% to 61.4\%, overtaking it at 30 MB; FedMobile from 57.9\% to 59.0\%; PFMH stays at about 56.3--57.0\%, the majority-class accuracy; MFedMC rises from 15.0\% to 29.0\% at 30 MB and drops to 25.7\% at 40 MB.}
+  \label{fig:ptbxl_budget_summary}
+\end{figure}
+
+\begin{figure*}[t]
+  \centering
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_ptbxl_cfg_10mb.png}
+    \caption{10\,MB upload budget}
+    \label{fig:ptbxl_cfg_10mb}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_ptbxl_cfg_20mb.png}
+    \caption{20\,MB upload budget}
+    \label{fig:ptbxl_cfg_20mb}
+  \end{subfigure}
+
+  \vspace{4pt}
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_ptbxl_cfg_30mb.png}
+    \caption{30\,MB upload budget}
+    \label{fig:ptbxl_cfg_30mb}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/fig_ptbxl_cfg_40mb.png}
+    \caption{40\,MB upload budget}
+    \label{fig:ptbxl_cfg_40mb}
+  \end{subfigure}
+  \caption{Test accuracy of the nine \method{} configurations versus cumulative upload on PTB-XL under four upload budgets. Colour: clients per round; line style: upload-sketch width (mean of five seeds); Table~\ref{tab:ptbxl_full} lists the final accuracies.}
+  \Description{Four line plots of average test accuracy against cumulative upload on PTB-XL for 10, 20, 30 and 40 MB budgets. Each shows nine \method{} configurations combining three upload-sketch widths with 3, 5 or 8 clients per round. Configurations with 5 clients per round and the narrowest sketch end highest (63.8\% to 65.0\%); those with 3 clients per round fluctuate the most.}
+  \label{fig:ptbxl_configs}
+\end{figure*}
 
 \begin{figure*}[t]
   \centering
@@ -911,11 +1251,8 @@ most constrained.
   \label{fig:mhealth_configs}
 \end{figure*}
 
-\paragraph{Effect of the configuration of \method{}.}
-Table~\ref{tab:uci_summary} and Figure~\ref{fig:uci_budget_bars} summarize the accuracy of the three approaches at
-each budget, i.e., the end points of the curves in
-Figure~\ref{fig:uci_budgets} and the values plotted in
-Figure~\ref{fig:uci_budget_summary}. Table~\ref{tab:uci_full} lists every
+\paragraph{Effect of the configuration of \method{} on UCI HAR.}
+Table~\ref{tab:uci_full} lists every
 configuration of \method{} that we evaluated, and Figure~\ref{fig:uci_configs}
 plots their accuracy curves, which shows how \method{} should spend a fixed
 budget. Two trends hold at every budget. First, for a fixed sketch size,
@@ -928,19 +1265,19 @@ fewer rounds (e.g., 80.93\% with $3\times10{,}000$ over 340 rounds vs.\ 77.05\%
 with $3\times30{,}000$ over 110 rounds at 40\,MB). In other words, under a
 tight budget, frequent updates matter more than recovering each update
 precisely. \method{} is also robust to its configuration: all 42
-configurations outperform B2, and 36 of them outperform B1 at the same budget.
-The six exceptions all run at most 55 rounds, because they combine several
-clients per round with a wide sketch, which confirms that the number of rounds
-is the main factor.
+configurations outperform B2, 36 of them outperform B1 and 33 outperform B5 at
+the same budget. The configurations that fall behind B1 or B5 all run at most
+70 rounds, because they combine several clients per round with a wide sketch,
+which confirms that the number of rounds is the main factor.
 
-\paragraph{Convergence of different configurations.}
+\paragraph{Convergence of different configurations on UCI HAR.}
 Figure~\ref{fig:uci_configs} shows how each combination of sketch width and
 clients per round spends the budget over time. Within each budget, all
 configurations follow similar curves during the first few megabytes, but they
-separate as the upload grows. Configurations with one client per round
-(10\%) and the narrowest sketch, which run the most rounds (170--340), take the
-lead early and keep it until the end of the budget; this configuration is the
-most accurate at every budget, reaching 72.51\%, 77.80\%, 77.66\%, 80.93\% and
+separate as the upload grows. Among the configurations with one client per
+round (10\%), the one with the narrowest sketch runs the most rounds (170--340),
+takes the lead early and keeps it until the end of the budget; it is the most
+accurate configuration at every budget, reaching 72.51\%, 77.80\%, 77.66\%, 80.93\% and
 80.85\% at 10, 20, 30, 40 and 50\,MB, respectively. Their curves fluctuate more
 from round to round, since each update comes from a single client with highly
 non-IID data, but the higher update frequency more than compensates. In
